@@ -82,20 +82,15 @@ function drawChart(root) {
 
   const node = g.append('g')
       .attr('stroke-linejoin', 'round')
-      .attr('stroke-width', 3)
+      .attr('stroke-width', 1.5)
     .selectAll('g')
     .data(rootHier.descendants())
     .join('g')
       .attr('transform', d => `translate(${d.y},${d.x})`);
 
-  node.append('circle')
-      .attr('fill', d => d.children ? '#555' : '#999')
-      .attr('r', 4);
-
   node.append('text')
+      .attr('text-anchor', 'middle')
       .attr('dy', '0.31em')
-      .attr('x', d => d.children ? -6 : 6)
-      .attr('text-anchor', d => d.children ? 'end' : 'start')
       .text(d => {
         let label = d.data.name || d.id;
         if (d.data['ownership%'] !== undefined && d.data['ownership%'] !== null) {
@@ -106,7 +101,22 @@ function drawChart(root) {
           label = `${flag} ${label}`;
         }
         return label;
-      })
+      });
+
+  node.each(function(d) {
+    const text = d3.select(this).select('text');
+    const bbox = text.node().getBBox();
+    d3.select(this)
+      .insert('rect', 'text')
+        .attr('x', bbox.x - 4)
+        .attr('y', bbox.y - 2)
+        .attr('width', bbox.width + 8)
+        .attr('height', bbox.height + 4)
+        .attr('fill', '#fff')
+        .attr('stroke', '#555');
+  });
+
+  node.select('text')
       .clone(true).lower()
       .attr('stroke', 'white');
 }
