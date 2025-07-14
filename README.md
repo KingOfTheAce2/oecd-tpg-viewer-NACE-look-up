@@ -5,7 +5,7 @@ This repository contains a small static website with several tools:
 1. **OECD Transfer Pricing Guidelines Viewer** – a searchable viewer for paragraphs from the OECD Transfer Pricing Guidelines.
 2. **NACE Rev. 2.1 Code Finder** – an interface for searching activities in the NACE classification.
 3. **Sankey Diagram Generator** – create simple Sankey diagrams from CSV/JSON data.
-4. **Charted** – A Flask-based organisational chart builder by A.C. van der Linde (see `charted_app/`).
+4. **Charted** – A Flask-based organisational chart builder by A.C. van der Linde (see `docs/assets/charted_app/`).
 
 The site is contained entirely in the `docs/` directory and can be used locally or hosted on any static web server.
 
