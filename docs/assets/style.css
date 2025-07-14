@@ -105,3 +105,17 @@ input {
   gap: 20px;
   margin-top: 40px;
 }
+
+/* Simple table styling for symbol explanations */
+.symbol-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 10px;
+}
+
+.symbol-table th,
+.symbol-table td {
+  border: 1px solid #ddd;
+  padding: 4px 8px;
+  text-align: left;
+}
