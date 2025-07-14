@@ -16,15 +16,10 @@
   <div style="text-align:center;margin-bottom:20px;">
     <a class="app-link" href="index.html">Home</a>
   </div>
-  <div class="container">
-    <div id="nace-root" class="viewer"></div>
-    <div id="naics-root" class="viewer"></div>
-  </div>
-  <script src="assets/nace/nace-app.js"></script>
-  <script src="assets/naics/naics-app.js"></script>
+  <div id="root"></div>
+  <script src="assets/combined/nace-naics-combined.js"></script>
   <script>
-    renderNACECodeFinder('nace-root');
-    renderNAICSCodeFinder('naics-root');
+    renderNaceNaicsCombined('root');
   </script>
 </body>
 </html>

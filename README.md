@@ -7,7 +7,7 @@ This repository contains a small static website with several tools:
 3. **NAICS Code Finder** – a similar viewer for the North American Industry Classification System.
 4. **Side‑by‑Side Viewer** – display the NACE and NAICS finders together for easy comparison.
 5. **Sankey Diagram Generator** – create simple Sankey diagrams from CSV/JSON data.
-6. **Charted** – A Flask-based organisational chart builder by A.C. van der Linde (see `docs/assets/charted_app/`).
+6. **Charted** – A client-side organisational chart builder powered by D3.js.
 
 The site is contained entirely in the `docs/` directory and can be used locally or hosted on any static web server.
 
@@ -21,7 +21,7 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
 * `naics.html` – loads `assets/naics/naics-app.js` for viewing NAICS data.
 * `nace-naics.html` – shows both viewers side by side on one page.
 * `sankey.html` – a simple page for creating Sankey diagrams.
-* `charted.html` – instructions for running the Charted organisational chart builder.
+* `charted.html` – a static organisational chart builder that runs entirely in the browser.
 
 ## File Layout
 
@@ -33,7 +33,7 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
   naics.html          # NAICS Code Finder page
   nace-naics.html     # Combined viewer for NACE and NAICS
   sankey.html         # Sankey Diagram Generator page
-  charted.html        # Instructions for Charted app
+  charted.html        # Client-side organisational chart builder
   /assets
     style.css            # Shared styles
     /oecd
@@ -50,6 +50,8 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
     /naics
       naics_data.json      # Dataset of NAICS codes
       naics-app.js         # React app for the NAICS finder
+    /charted_static
+      charted.js           # Browser-based organisational chart builder
 ```
 
 ## Notes
