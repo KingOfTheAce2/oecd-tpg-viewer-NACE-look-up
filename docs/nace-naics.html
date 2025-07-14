@@ -18,12 +18,27 @@
     <a class="app-link" href="index.html">Home</a>
   </div>
 
-  <!-- wrap both viewers in the same flex container -->
-  <div id="root" class="container"></div>
+  <!-- explanation of NAICS symbols -->
+  <div id="symbol-explanation" style="padding:20px; max-width:800px; margin:0 auto;">
+    <h2>Explanation of Symbols</h2>
+    <h3>In titles and descriptions of industries</h3>
+    <table class="symbol-table">
+      <tr><th>Symbol</th><th>Explanation</th></tr>
+      <tr><td>T</td><td>Canadian, Mexican, and United States industries are comparable</td></tr>
+    </table>
+  </div>
 
-  <script src="assets/combined/nace-naics-combined.js"></script>
+  <!-- side-by-side viewers -->
+  <div class="container">
+    <div id="nace-root" class="viewer"></div>
+    <div id="naics-root" class="viewer"></div>
+  </div>
+
+  <script src="assets/nace/nace-app.js"></script>
+  <script src="assets/naics/naics-app.js"></script>
   <script>
-    renderNaceNaicsCombined('root');
+    renderNACECodeFinder('nace-root');
+    renderNAICSCodeFinder('naics-root');
   </script>
 </body>
 </html>

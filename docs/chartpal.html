@@ -15,9 +15,12 @@
     <a class="app-link" href="index.html">Home</a>
   </div>
   <h1 style="text-align:center;">ChartPal</h1>
-  <p style="text-align:center;">Upload a CSV file with <code>id,parent,name[,ownership,jurisdiction]</code> columns to generate an organisational chart entirely in your browser.</p>
+  <p style="text-align:center;">Upload a CSV file or paste CSV text with <code>id,parent,name,ownership (%),jurisdiction</code> columns to generate an organisational chart entirely in your browser.</p>
   <div style="text-align:center;margin-bottom:10px;">
     <input type="file" id="csvfile" accept=".csv" />
+  </div>
+  <div style="text-align:center;margin-bottom:10px;">
+    <textarea id="csvtext" rows="6" style="width:90%;max-width:800px;" placeholder="id,parent,name,ownership,jurisdiction&#10;1,,Parent Co,100,US&#10;2,1,Subsidiary,80,DE"></textarea>
   </div>
   <div style="text-align:center;margin-bottom:20px;">
     <button id="generate" class="app-link">Generate Chart</button>
