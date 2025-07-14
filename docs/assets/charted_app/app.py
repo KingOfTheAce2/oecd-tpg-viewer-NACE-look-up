@@ -11,20 +11,26 @@ from typing import Optional
 from sqlalchemy import create_engine, Column, String, Table, MetaData, Float, Integer, insert, text
 import numpy as np
 
+# Resolve base directory for relative paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # Initialize Flask app
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    template_folder=os.path.join(BASE_DIR, 'templates'),
+    static_folder=os.path.join(BASE_DIR, 'static')
+)
 app.secret_key = 'your_secret_key_change_this_in_production'
 
 # Configure Flask-Session for server-side session storage
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_FILE_DIR'] = os.path.join(os.getcwd(), 'session_files')
+app.config['SESSION_FILE_DIR'] = os.path.join(BASE_DIR, 'session_files')
 app.config['SESSION_FILE_THRESHOLD'] = 100
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(hours=1)
 Session(app)
 
 # Define the path to the temporary directory
-TMP_DIR = os.path.join(os.getcwd(), 'tmp')
+TMP_DIR = os.path.join(BASE_DIR, 'tmp')
 os.makedirs(TMP_DIR, exist_ok=True)
 
 # Limit file size to 16 MB
@@ -72,7 +78,7 @@ class Person(BaseModel):
     ENTITY_ID: Optional[str] = None
 
 # Database setup
-DATABASE_URL = "sqlite:///charted_entities.db"
+DATABASE_URL = f"sqlite:///{os.path.join(BASE_DIR, 'charted_entities.db')}"
 engine = create_engine(DATABASE_URL, echo=True)
 metadata = MetaData()
 
