@@ -93,14 +93,25 @@ function drawChart(root) {
       .attr('stroke', 'white');
 }
 
+function parseCsvText(text) {
+  const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
+  const headers = rows.shift();
+  return rows.map(r => {
+    const obj = {};
+    headers.forEach((h,i) => obj[h.trim()] = r[i] ? r[i].trim() : '');
+    return obj;
+  });
+}
+
 async function handleGenerate() {
   const file = document.getElementById('csvfile').files[0];
-  if (!file) {
-    alert('Please select a CSV file with id,parent,name[,ownership,jurisdiction] columns.');
+  const text = document.getElementById('csvtext').value.trim();
+  if (!file && !text) {
+    alert('Please provide a CSV file or paste data with id,parent,name,ownership,jurisdiction columns.');
     return;
   }
   try {
-    const records = await readCsv(file);
+    const records = file ? await readCsv(file) : parseCsvText(text);
     const root = buildHierarchy(records);
     drawChart(root);
   } catch(err) {
