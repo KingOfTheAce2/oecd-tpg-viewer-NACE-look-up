@@ -50,7 +50,9 @@ function countryFlagEmoji(code) {
 
 function drawChart(root) {
   d3.select('#chart').selectAll('*').remove();
-  const width = 800;
+  const container = document.getElementById('chart');
+  const containerWidth = container ? container.clientWidth : 800;
+  const width = Math.max(containerWidth, 800);
   const dx = 10;
   const dy = width / 6;
   const tree = d3.tree().nodeSize([dx, dy]);
