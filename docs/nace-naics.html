@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NACE & NAICS Viewer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    .container { display: flex; flex-wrap: wrap; gap: 20px; }
+    .viewer { flex: 1 1 400px; min-width: 300px; }
+  </style>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+</head>
+<body>
+  <div style="text-align:center;margin-bottom:20px;">
+    <a class="app-link" href="index.html">Home</a>
+  </div>
+  <div class="container">
+    <div id="nace-root" class="viewer"></div>
+    <div id="naics-root" class="viewer"></div>
+  </div>
+  <script src="assets/nace/nace-app.js"></script>
+  <script src="assets/naics/naics-app.js"></script>
+  <script>
+    renderNACECodeFinder('nace-root');
+    renderNAICSCodeFinder('naics-root');
+  </script>
+</body>
+</html>

@@ -149,4 +149,12 @@ function NACECodeFinder() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(NACECodeFinder));
+window.renderNACECodeFinder = function(rootId) {
+  ReactDOM.createRoot(document.getElementById(rootId)).render(
+    React.createElement(NACECodeFinder)
+  );
+};
+
+if (document.currentScript && document.getElementById('root')) {
+  window.renderNACECodeFinder('root');
+}

@@ -1,4 +1,4 @@
-function NACECodeFinder() {
+function NAICSCodeFinder() {
   const { useState, useEffect } = React;
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,7 +11,7 @@ function NACECodeFinder() {
   const [error, setError] = useState(null);
 
   const loadData = (retry = 3) => {
-    const url = 'assets/nace/nace_data.json';
+    const url = 'assets/naics/naics_data.json';
     fetch(url)
       .then((r) => r.json())
       .then((d) => { setData(d); setLoading(false); })
@@ -90,17 +90,16 @@ function NACECodeFinder() {
 
   return (
     React.createElement('div', { style: { padding: '20px', maxWidth: '800px', margin: '0 auto' } },
-      React.createElement('h1', { style: { fontSize: '24px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' } }, 'NACE Rev. 2.1 Code Finder'),
+      React.createElement('h1', { style: { fontSize: '24px', fontWeight: 'bold', marginBottom: '16px', textAlign: 'center' } }, 'NAICS Code Finder'),
       React.createElement('div', { style: { marginBottom: '16px' } },
         React.createElement('h3', null, 'Primary Search'),
         React.createElement('input', { type: 'text', placeholder: 'Primary Search...', value: searchQuery, onChange: (e) => setSearchQuery(e.target.value), onKeyDown: (e) => { if (e.key === 'Enter') handleSearch(); }, style: { width: '100%', padding: '10px', marginBottom: '8px' } }),
         React.createElement('select', { value: searchField, onChange: (e) => setSearchField(e.target.value), style: { width: '100%', padding: '10px' } },
           React.createElement('option', { value: 'all' }, 'All Fields'),
-          React.createElement('option', { value: 'CODE' }, 'Code'),
-          React.createElement('option', { value: 'NAME' }, 'Name'),
-          React.createElement('option', { value: 'Includes' }, 'Includes'),
-          React.createElement('option', { value: 'IncludesAlso' }, 'Includes Also'),
-          React.createElement('option', { value: 'Excludes' }, 'Excludes')
+          React.createElement('option', { value: 'Code' }, 'Code'),
+          React.createElement('option', { value: 'Name' }, 'Name'),
+          React.createElement('option', { value: 'Description' }, 'Description'),
+          React.createElement('option', { value: 'Cross-Reference' }, 'Cross-Reference')
         )
       ),
       React.createElement('div', { style: { marginBottom: '16px' } },
@@ -108,11 +107,10 @@ function NACECodeFinder() {
         React.createElement('input', { type: 'text', placeholder: 'Secondary Search...', value: secondaryQuery, onChange: (e) => setSecondaryQuery(e.target.value), onKeyDown: (e) => { if (e.key === 'Enter') handleSearch(); }, style: { width: '100%', padding: '10px', marginBottom: '8px' } }),
         React.createElement('select', { value: secondaryField, onChange: (e) => setSecondaryField(e.target.value), style: { width: '100%', padding: '10px' } },
           React.createElement('option', { value: 'all' }, 'All Fields'),
-          React.createElement('option', { value: 'CODE' }, 'Code'),
-          React.createElement('option', { value: 'NAME' }, 'Name'),
-          React.createElement('option', { value: 'Includes' }, 'Includes'),
-          React.createElement('option', { value: 'IncludesAlso' }, 'Includes Also'),
-          React.createElement('option', { value: 'Excludes' }, 'Excludes')
+          React.createElement('option', { value: 'Code' }, 'Code'),
+          React.createElement('option', { value: 'Name' }, 'Name'),
+          React.createElement('option', { value: 'Description' }, 'Description'),
+          React.createElement('option', { value: 'Cross-Reference' }, 'Cross-Reference')
         )
       ),
       React.createElement('div', { style: { textAlign: 'center', marginBottom: '16px' } },
@@ -124,29 +122,33 @@ function NACECodeFinder() {
           React.createElement('div', { key: idx, style: { marginBottom: '16px', padding: '16px', backgroundColor: '#fff', border: '1px solid #ddd', borderRadius: '4px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' } },
             React.createElement('div', { style: { marginBottom: '12px' } },
               React.createElement('strong', { style: { fontSize: '16px', color: '#333' } }, 'Code: '),
-              React.createElement('span', { style: { fontSize: '16px', fontWeight: 'bold', color: '#007bff' } }, item.CODE.toString())
+              React.createElement('span', { style: { fontSize: '16px', fontWeight: 'bold', color: '#007bff' } }, item.Code.toString())
             ),
             React.createElement('div', { style: { marginBottom: '12px' } },
               React.createElement('strong', { style: { fontSize: '16px', color: '#333' } }, 'Name: '),
-              React.createElement('span', { style: { fontSize: '16px' } }, item.NAME)
+              React.createElement('span', { style: { fontSize: '16px' } }, item.Name)
             ),
             React.createElement('div', { style: { marginBottom: '12px' } },
-              React.createElement('strong', { style: { fontSize: '16px', color: '#333', display: 'block', marginBottom: '4px' } }, 'Includes:'),
-              formatText(item.Includes)
+              React.createElement('strong', { style: { fontSize: '16px', color: '#333', display: 'block', marginBottom: '4px' } }, 'Description:'),
+              formatText(item.Description)
             ),
-            item.IncludesAlso ? React.createElement('div', { style: { marginBottom: '12px' } },
-              React.createElement('strong', { style: { fontSize: '16px', color: '#333', display: 'block', marginBottom: '4px' } }, 'Includes Also:'),
-              formatText(item.IncludesAlso)
-            ) : null,
-            item.Excludes ? React.createElement('div', { style: { marginBottom: '12px' } },
-              React.createElement('strong', { style: { fontSize: '16px', color: '#333', display: 'block', marginBottom: '4px' } }, 'Excludes:'),
-              formatText(item.Excludes)
+            item["Cross-Reference"] ? React.createElement('div', { style: { marginBottom: '12px' } },
+              React.createElement('strong', { style: { fontSize: '16px', color: '#333', display: 'block', marginBottom: '4px' } }, 'Cross-Reference:'),
+              formatText(item["Cross-Reference"])
             ) : null
           )
         ))
-      ) : React.createElement('p', { style: { textAlign: 'center', fontSize: '16px', color: '#666' } }, 'No results found. Try searching for terms like "wheat", "farming", or specific NACE codes.')
+      ) : React.createElement('p', { style: { textAlign: 'center', fontSize: '16px', color: '#666' } }, 'No results found. Try searching for terms like "wheat", "farming", or specific NAICS codes.')
     )
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(NACECodeFinder));
+window.renderNAICSCodeFinder = function(rootId) {
+  ReactDOM.createRoot(document.getElementById(rootId)).render(
+    React.createElement(NAICSCodeFinder)
+  );
+};
+
+if (document.currentScript && document.getElementById('root')) {
+  window.renderNAICSCodeFinder('root');
+}
