@@ -1,9 +1,11 @@
 # OECD TPG Viewer & NACE Code Finder
 
-This repository contains a small static website with two tools:
+This repository contains a small static website with several tools:
 
 1. **OECD Transfer Pricing Guidelines Viewer** – a searchable viewer for paragraphs from the OECD Transfer Pricing Guidelines.
 2. **NACE Rev. 2.1 Code Finder** – an interface for searching activities in the NACE classification.
+3. **Sankey Diagram Generator** – create simple Sankey diagrams from CSV/JSON data.
+4. **Charted** – A Flask-based organisational chart builder by A.C. van der Linde (see `charted_app/`).
 
 The site is contained entirely in the `docs/` directory and can be used locally or hosted on any static web server.
 
@@ -14,6 +16,8 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
 * `oecd.html` – provides a search box that filters paragraphs in real time. Data is loaded dynamically from the `assets/oecd/<language>/<chapter>.json` files.
   Supported language folders include `en`, `es`, `fr`, `de`, `ja`, and `sk`.
 * `nace.html` – loads `assets/nace/nace-app.js` which renders the NACE code finder using React.
+* `sankey.html` – a simple page for creating Sankey diagrams.
+* `charted.html` – instructions for running the Charted organisational chart builder.
 
 ## File Layout
 
@@ -22,6 +26,8 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
   index.html          # Landing page linking to the two apps
   oecd.html           # OECD TPG Viewer page
   nace.html           # NACE Code Finder page
+  sankey.html         # Sankey Diagram Generator page
+  charted.html        # Instructions for Charted app
   /assets
     style.css            # Shared styles
     /oecd
