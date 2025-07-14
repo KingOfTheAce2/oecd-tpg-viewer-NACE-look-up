@@ -9,39 +9,26 @@
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 </head>
 <body>
-  <div style="text-align:center;margin-bottom:20px;">
+  <div style="text-align:center; margin-bottom:20px;">
     <a class="app-link" href="index.html">Home</a>
   </div>
-  <div id="root"></div>
-  <div id="symbol-explanation" style="padding:20px;max-width:800px;margin:0 auto;">
+
+  <!-- only the requested explanation, placed above the search root -->
+  <div id="symbol-explanation" style="padding:20px; max-width:800px; margin:0 auto;">
     <h2>Explanation of Symbols</h2>
-
-    <h3>In NAICS United States Structure</h3>
+    <h3>In titles and descriptions of industries</h3>
     <table class="symbol-table">
       <tr><th>Symbol</th><th>Explanation</th></tr>
-      <tr><td>T</td><td>Canadian, Mexican, and United States industries are comparable</td></tr>
-    </table>
-
-    <h3>In Part I, Titles and Descriptions of Industries</h3>
-    <table class="symbol-table">
-      <tr><th>Symbol</th><th>Explanation</th></tr>
-      <tr><td>T</td><td>Canadian, Mexican, and United States industries are comparable</td></tr>
-    </table>
-
-    <h3>In Appendix A</h3>
-    <table class="symbol-table">
-      <tr><th>Symbol</th><th>Explanation</th></tr>
-      <tr><td>N</td><td>New NAICS industry/code for 2022</td></tr>
-      <tr><td>*</td><td>Part of 2017 NAICS United States industry</td></tr>
-      <tr><td>R</td><td>2017 NAICS industry code reused with different content</td></tr>
-    </table>
-
-    <h3>In Appendix B</h3>
-    <table class="symbol-table">
-      <tr><th>Symbol</th><th>Explanation</th></tr>
-      <tr><td>pt.</td><td>Part of 2022 NAICS United States industry</td></tr>
+      <tr>
+        <td>T</td>
+        <td>Canadian, Mexican, and United States industries are comparable</td>
+      </tr>
     </table>
   </div>
+
+  <!-- search app will render here -->
+  <div id="root"></div>
+
   <script type="text/javascript" src="assets/naics/naics-app.js"></script>
   <script>renderNAICSCodeFinder('root');</script>
 </body>
