@@ -6,17 +6,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/style.css" />
   <style>
-    .container { display: flex; flex-wrap: wrap; gap: 20px; }
-    .viewer { flex: 1 1 400px; min-width: 300px; }
+    /* force a single-row layout */
+    .container { display: flex; flex-direction: row; gap: 20px; }
+    .viewer    { flex: 1; min-width: 300px; }
   </style>
   <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
   <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
 </head>
 <body>
-  <div style="text-align:center;margin-bottom:20px;">
+  <div style="text-align: center; margin-bottom: 20px;">
     <a class="app-link" href="index.html">Home</a>
   </div>
-  <div id="root"></div>
+
+  <!-- wrap both viewers in the same flex container -->
+  <div id="root" class="container"></div>
+
   <script src="assets/combined/nace-naics-combined.js"></script>
   <script>
     renderNaceNaicsCombined('root');
