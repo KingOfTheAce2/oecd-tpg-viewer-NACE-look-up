@@ -23,6 +23,15 @@ function buildHierarchy(records) {
   return stratify(records);
 }
 
+function countryFlagEmoji(code) {
+  if (!code || code.length !== 2) return '';
+  const base = 127397;
+  return String.fromCodePoint(
+    base + code.toUpperCase().charCodeAt(0),
+    base + code.toUpperCase().charCodeAt(1)
+  );
+}
+
 function drawChart(root) {
   d3.select('#chart').selectAll('*').remove();
   const width = 800;
@@ -71,15 +80,23 @@ function drawChart(root) {
       .attr('dy', '0.31em')
       .attr('x', d => d.children ? -6 : 6)
       .attr('text-anchor', d => d.children ? 'end' : 'start')
-      .text(d => d.name)
-    .clone(true).lower()
+      .text(d => {
+        let label = d.data.name || d.id;
+        if (d.data.ownership) label += ` (${d.data.ownership}%)`;
+        if (d.data.jurisdiction) {
+          const flag = countryFlagEmoji(d.data.jurisdiction);
+          label = `${flag} ${label}`;
+        }
+        return label;
+      })
+      .clone(true).lower()
       .attr('stroke', 'white');
 }
 
 async function handleGenerate() {
   const file = document.getElementById('csvfile').files[0];
   if (!file) {
-    alert('Please select a CSV file with id,parent,name columns.');
+    alert('Please select a CSV file with id,parent,name[,ownership,jurisdiction] columns.');
     return;
   }
   try {
@@ -91,4 +108,37 @@ async function handleGenerate() {
   }
 }
 
-document.getElementById('generate').addEventListener('click', handleGenerate);
+  document.getElementById('generate').addEventListener('click', handleGenerate);
+
+function downloadSvg() {
+  const svg = document.querySelector('#chart svg');
+  if (!svg) return;
+  const blob = new Blob([svg.outerHTML], {type: 'image/svg+xml'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'chart.svg';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function downloadPng() {
+  const svg = document.querySelector('#chart svg');
+  if (!svg) return;
+  saveSvgAsPng(svg, 'chart.png');
+}
+
+function downloadPptx() {
+  const svg = document.querySelector('#chart svg');
+  if (!svg) return;
+  saveSvgAsPng(svg, null, {encoderType:'image/png'}).then(dataUrl => {
+    const pptx = new PptxGenJS();
+    const slide = pptx.addSlide();
+    slide.addImage({data:dataUrl, x:0.5, y:0.5, w:9, h:5});
+    pptx.writeFile('chart.pptx');
+  });
+}
+
+document.getElementById('download-svg').addEventListener('click', downloadSvg);
+document.getElementById('download-png').addEventListener('click', downloadPng);
+document.getElementById('download-pptx').addEventListener('click', downloadPptx);
