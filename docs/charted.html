@@ -5,17 +5,24 @@
   <title>Charted - by A.C. van der Linde</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/style.css" />
+  <style>
+    #chart svg { width: 100%; height: auto; }
+  </style>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <div style="text-align:center;margin-bottom:20px;">
     <a class="app-link" href="index.html">Home</a>
   </div>
-  <h1 style="text-align:center;">Charted - by A.C. van der Linde</h1>
-  <p>This repository includes the source code for the Charted application in the
-    <code>docs/assets/charted_app/</code> folder. To run the Flask app locally install the
-    dependencies and execute <code>python docs/assets/charted_app/app.py</code>.</p>
-  <pre><code>pip install flask flask_session pandas sqlalchemy pydantic
-python docs/assets/charted_app/app.py</code></pre>
-  <p>The application will start on <code>http://localhost:5000/</code>.</p>
+  <h1 style="text-align:center;">Charted - Client Version</h1>
+  <p style="text-align:center;">Upload a CSV file with <code>id,parent,name</code> columns to generate an organisational chart entirely in your browser.</p>
+  <div style="text-align:center;margin-bottom:10px;">
+    <input type="file" id="csvfile" accept=".csv" />
+  </div>
+  <div style="text-align:center;margin-bottom:20px;">
+    <button id="generate" class="app-link">Generate Chart</button>
+  </div>
+  <div id="chart"></div>
+  <script src="assets/charted_static/charted.js"></script>
 </body>
 </html>
