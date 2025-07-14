@@ -18,8 +18,24 @@ function readCsv(file) {
   });
 }
 
+function parseOwnership(value) {
+  if (!value && value !== 0) return null;
+  let v = value.toString().trim();
+  if (v.endsWith('%')) v = v.slice(0, -1);
+  let num = parseFloat(v);
+  if (isNaN(num)) return null;
+  if (num <= 1) num = num * 100;
+  return Math.round(num * 100) / 100; // keep two decimals
+}
+
 function buildHierarchy(records) {
-  const stratify = d3.stratify().id(d => d.id).parentId(d => d.parent);
+  records.forEach(rec => {
+    if (rec['ownership%'] !== undefined) {
+      const val = parseOwnership(rec['ownership%']);
+      if (val !== null) rec['ownership%'] = val;
+    }
+  });
+  const stratify = d3.stratify().id(d => d.id).parentId(d => d.parent_id);
   return stratify(records);
 }
 
@@ -82,7 +98,9 @@ function drawChart(root) {
       .attr('text-anchor', d => d.children ? 'end' : 'start')
       .text(d => {
         let label = d.data.name || d.id;
-        if (d.data.ownership) label += ` (${d.data.ownership}%)`;
+        if (d.data['ownership%'] !== undefined && d.data['ownership%'] !== null) {
+          label += ` (${d.data['ownership%']}%)`;
+        }
         if (d.data.jurisdiction) {
           const flag = countryFlagEmoji(d.data.jurisdiction);
           label = `${flag} ${label}`;
@@ -107,7 +125,7 @@ async function handleGenerate() {
   const file = document.getElementById('csvfile').files[0];
   const text = document.getElementById('csvtext').value.trim();
   if (!file && !text) {
-    alert('Please provide a CSV file or paste data with id,parent,name,ownership,jurisdiction columns.');
+    alert('Please provide a CSV file or paste data with id,parent_id,name,ownership%,jurisdiction columns.');
     return;
   }
   try {

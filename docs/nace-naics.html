@@ -28,17 +28,12 @@
     </table>
   </div>
 
-  <!-- side-by-side viewers -->
-  <div class="container">
-    <div id="nace-root" class="viewer"></div>
-    <div id="naics-root" class="viewer"></div>
-  </div>
+  <!-- combined search viewer -->
+  <div id="combined-root" style="margin-top:20px;"></div>
 
-  <script src="assets/nace/nace-app.js"></script>
-  <script src="assets/naics/naics-app.js"></script>
+  <script src="assets/combined/nace-naics-combined.js"></script>
   <script>
-    renderNACECodeFinder('nace-root');
-    renderNAICSCodeFinder('naics-root');
+    renderNaceNaicsCombined('combined-root');
   </script>
 </body>
 </html>
