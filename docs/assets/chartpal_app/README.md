@@ -1,6 +1,6 @@
-# Charted - by A.C. van der Linde
+# ChartPal
 
-This folder contains the source code for the **Charted** application by A.C. van der Linde.
+This folder contains the source code for the **ChartPal** application.
 It is a Flask-based tool for uploading entity, ownership, and person data and
 visualising the resulting organisational chart using D3.js.
 

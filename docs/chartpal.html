@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Charted - by A.C. van der Linde</title>
+  <title>ChartPal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/style.css" />
   <style>
@@ -14,15 +14,20 @@
   <div style="text-align:center;margin-bottom:20px;">
     <a class="app-link" href="index.html">Home</a>
   </div>
-  <h1 style="text-align:center;">Charted - Client Version</h1>
-  <p style="text-align:center;">Upload a CSV file with <code>id,parent,name</code> columns to generate an organisational chart entirely in your browser.</p>
+  <h1 style="text-align:center;">ChartPal</h1>
+  <p style="text-align:center;">Upload a CSV file with <code>id,parent,name[,ownership,jurisdiction]</code> columns to generate an organisational chart entirely in your browser.</p>
   <div style="text-align:center;margin-bottom:10px;">
     <input type="file" id="csvfile" accept=".csv" />
   </div>
   <div style="text-align:center;margin-bottom:20px;">
     <button id="generate" class="app-link">Generate Chart</button>
+    <button id="download-svg" class="app-link">Download SVG</button>
+    <button id="download-png" class="app-link">Download PNG</button>
+    <button id="download-pptx" class="app-link">Download PPTX</button>
   </div>
   <div id="chart"></div>
-  <script src="assets/charted_static/charted.js"></script>
+  <script src="assets/chartpal_static/chartpal.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/save-svg-as-png/1.4.17/saveSvgAsPng.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.8.0/dist/pptxgen.bundle.js"></script>
 </body>
 </html>
