@@ -7,10 +7,8 @@
   <link rel="stylesheet" href="assets/style.css" />
   <style>
     body { max-width: none; }
-    #chart { width: 100%; overflow: auto; }
-    #chart svg { width: 100%; height: auto; }
+    #ascii-chart { width:90%;max-width:800px;margin:20px auto;padding:10px;background:#f7f7f7;overflow:auto; }
   </style>
-  <script src="https://d3js.org/d3.v7.min.js"></script>
 </head>
 <body>
   <div style="text-align:center;margin-bottom:20px;">
@@ -31,13 +29,13 @@ id,parent_id,name,ownership%,jurisdiction
   </div>
   <div style="text-align:center;margin-bottom:20px;">
     <button id="generate" class="app-link">Generate Chart</button>
-    <button id="download-svg" class="app-link">Download SVG</button>
-    <button id="download-png" class="app-link">Download PNG</button>
-    <button id="download-pptx" class="app-link">Download PPTX</button>
+    <button id="download-csv" class="app-link">Download CSV</button>
   </div>
-  <div id="chart"></div>
+  <div style="text-align:center;margin-bottom:10px;">
+    <label for="country-info">Jurisdictions:</label>
+    <select id="country-info"></select>
+  </div>
+  <pre id="ascii-chart"></pre>
   <script src="assets/chartpal_static/chartpal.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/save-svg-as-png/1.4.17/saveSvgAsPng.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.8.0/dist/pptxgen.bundle.js"></script>
 </body>
 </html>

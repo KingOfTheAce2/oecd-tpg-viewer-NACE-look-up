@@ -1,20 +1,35 @@
+// Minimal ASCII-based organisational chart builder
+let currentCsvText = '';
+const countryNames = {
+  US: 'United States',
+  DE: 'Germany',
+  GB: 'United Kingdom',
+  FR: 'France',
+  ES: 'Spain',
+  IT: 'Italy',
+  NL: 'Netherlands',
+  BE: 'Belgium'
+};
+
 function readCsv(file) {
   return new Promise((resolve, reject) => {
     if (!file) return reject('No file provided');
     const reader = new FileReader();
-    reader.onload = () => {
-      const text = reader.result;
-      const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
-      const headers = rows.shift();
-      const data = rows.map(r => {
-        const obj = {};
-        headers.forEach((h,i) => obj[h.trim()] = r[i] ? r[i].trim() : '');
-        return obj;
-      });
-      resolve(data);
-    };
+    reader.onload = () => resolve(reader.result);
     reader.onerror = () => reject('Failed to read file');
     reader.readAsText(file);
+  });
+}
+
+function parseCsvText(text) {
+  const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
+  const headers = rows.shift();
+  return rows.map(r => {
+    const obj = {};
+    headers.forEach((h, i) => {
+      obj[h.trim()] = r[i] ? r[i].trim() : '';
+    });
+    return obj;
   });
 }
 
@@ -25,18 +40,27 @@ function parseOwnership(value) {
   let num = parseFloat(v);
   if (isNaN(num)) return null;
   if (num <= 1) num = num * 100;
-  return Math.round(num * 100) / 100; // keep two decimals
+  return Math.round(num * 100) / 100;
 }
 
 function buildHierarchy(records) {
+  const nodes = new Map();
   records.forEach(rec => {
     if (rec['ownership%'] !== undefined) {
       const val = parseOwnership(rec['ownership%']);
       if (val !== null) rec['ownership%'] = val;
     }
+    nodes.set(rec.id, Object.assign({}, rec, { children: [] }));
   });
-  const stratify = d3.stratify().id(d => d.id).parentId(d => d.parent_id);
-  return stratify(records);
+  const roots = [];
+  nodes.forEach(node => {
+    if (node.parent_id && nodes.has(node.parent_id)) {
+      nodes.get(node.parent_id).children.push(node);
+    } else {
+      roots.push(node);
+    }
+  });
+  return { children: roots };
 }
 
 function countryFlagEmoji(code) {
@@ -48,138 +72,70 @@ function countryFlagEmoji(code) {
   );
 }
 
-function drawChart(root) {
-  d3.select('#chart').selectAll('*').remove();
-  const container = document.getElementById('chart');
-  const containerWidth = container ? container.clientWidth : 800;
-  const width = Math.max(containerWidth, 800);
-  const dx = 10;
-  const dy = width / 6;
-  const tree = d3.tree().nodeSize([dx, dy]);
-  const rootHier = tree(root);
-  let x0 = Infinity;
-  let x1 = -x0;
-  rootHier.each(d => {
-    if (d.x > x1) x1 = d.x;
-    if (d.x < x0) x0 = d.x;
-  });
-  const svg = d3.select('#chart').append('svg')
-      .attr('viewBox', [0, 0, width, x1 - x0 + dx * 2])
-      .style('font', '10px sans-serif')
-      .style('user-select', 'none');
-
-  const g = svg.append('g').attr('transform', `translate(${dy / 3},${dx - x0})`);
-
-  const link = g.append('g')
-      .attr('fill', 'none')
-      .attr('stroke', '#555')
-      .attr('stroke-opacity', 0.4)
-      .attr('stroke-width', 1.5)
-    .selectAll('path')
-    .data(rootHier.links())
-    .join('path')
-      .attr('d', d3.linkHorizontal()
-          .x(d => d.y)
-          .y(d => d.x));
-
-  const node = g.append('g')
-      .attr('stroke-linejoin', 'round')
-      .attr('stroke-width', 1.5)
-    .selectAll('g')
-    .data(rootHier.descendants())
-    .join('g')
-      .attr('transform', d => `translate(${d.y},${d.x})`);
-
-  node.append('text')
-      .attr('text-anchor', 'middle')
-      .attr('dy', '0.31em')
-      .text(d => {
-        let label = d.data.name || d.id;
-        if (d.data['ownership%'] !== undefined && d.data['ownership%'] !== null) {
-          label += ` (${d.data['ownership%']}%)`;
-        }
-        if (d.data.jurisdiction) {
-          const flag = countryFlagEmoji(d.data.jurisdiction);
-          label = `${flag} ${label}`;
-        }
-        return label;
-      });
-
-  node.each(function(d) {
-    const text = d3.select(this).select('text');
-    const bbox = text.node().getBBox();
-    d3.select(this)
-      .insert('rect', 'text')
-        .attr('x', bbox.x - 4)
-        .attr('y', bbox.y - 2)
-        .attr('width', bbox.width + 8)
-        .attr('height', bbox.height + 4)
-        .attr('fill', '#fff')
-        .attr('stroke', '#555');
-  });
-
-  node.select('text')
-      .clone(true).lower()
-      .attr('stroke', 'white');
+function asciiTree(root) {
+  const lines = [];
+  function walk(node, prefix, isRoot, isLast) {
+    const flag = node.jurisdiction ? countryFlagEmoji(node.jurisdiction) + ' ' : '';
+    const own = node['ownership%'] !== undefined && node['ownership%'] !== null ? ` (${node['ownership%']}%)` : '';
+    const label = `${flag}${node.name || node.id}${own}`;
+    if (isRoot) {
+      lines.push(label);
+    } else {
+      lines.push(prefix + (isLast ? '└─ ' : '├─ ') + label);
+    }
+    const children = node.children || [];
+    const newPrefix = prefix + (isRoot ? '' : (isLast ? '   ' : '│  '));
+    children.forEach((c, idx) => walk(c, newPrefix, false, idx === children.length - 1));
+  }
+  root.children.forEach((c, idx) => walk(c, '', true, idx === root.children.length - 1));
+  return lines.join('\n');
 }
 
-function parseCsvText(text) {
-  const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
-  const headers = rows.shift();
-  return rows.map(r => {
-    const obj = {};
-    headers.forEach((h,i) => obj[h.trim()] = r[i] ? r[i].trim() : '');
-    return obj;
+function updateCountryDropdown(records) {
+  const dropdown = document.getElementById('country-info');
+  dropdown.innerHTML = '';
+  const codes = Array.from(new Set(records.map(r => r.jurisdiction).filter(Boolean)));
+  codes.forEach(code => {
+    const option = document.createElement('option');
+    const name = countryNames[code.toUpperCase()] || '';
+    option.value = code;
+    option.textContent = `${countryFlagEmoji(code)} ${code}${name ? ' - ' + name : ''}`;
+    dropdown.appendChild(option);
   });
 }
 
 async function handleGenerate() {
   const file = document.getElementById('csvfile').files[0];
-  const text = document.getElementById('csvtext').value.trim();
-  if (!file && !text) {
-    alert('Please provide a CSV file or paste data with id,parent_id,name,ownership%,jurisdiction columns.');
-    return;
-  }
+  const textArea = document.getElementById('csvtext');
+  let text = textArea.value.trim();
   try {
-    const records = file ? await readCsv(file) : parseCsvText(text);
+    if (file) text = await readCsv(file);
+    if (!text) {
+      alert('Please provide CSV data.');
+      return;
+    }
+    currentCsvText = text;
+    const records = parseCsvText(text);
     const root = buildHierarchy(records);
-    drawChart(root);
-  } catch(err) {
+    document.getElementById('ascii-chart').textContent = asciiTree(root);
+    updateCountryDropdown(records);
+  } catch (err) {
     alert('Failed to parse CSV: ' + err);
   }
 }
 
-  document.getElementById('generate').addEventListener('click', handleGenerate);
+document.getElementById('generate').addEventListener('click', handleGenerate);
 
-function downloadSvg() {
-  const svg = document.querySelector('#chart svg');
-  if (!svg) return;
-  const blob = new Blob([svg.outerHTML], {type: 'image/svg+xml'});
+function downloadCsv() {
+  if (!currentCsvText) return;
+  const blob = new Blob([currentCsvText], { type: 'text/csv' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'chart.svg';
+  a.download = 'chart.csv';
   a.click();
   URL.revokeObjectURL(url);
 }
 
-function downloadPng() {
-  const svg = document.querySelector('#chart svg');
-  if (!svg) return;
-  saveSvgAsPng(svg, 'chart.png');
-}
+document.getElementById('download-csv').addEventListener('click', downloadCsv);
 
-function downloadPptx() {
-  const svg = document.querySelector('#chart svg');
-  if (!svg) return;
-  saveSvgAsPng(svg, null, {encoderType:'image/png'}).then(dataUrl => {
-    const pptx = new PptxGenJS();
-    const slide = pptx.addSlide();
-    slide.addImage({data:dataUrl, x:0.5, y:0.5, w:9, h:5});
-    pptx.writeFile('chart.pptx');
-  });
-}
-
-document.getElementById('download-svg').addEventListener('click', downloadSvg);
-document.getElementById('download-png').addEventListener('click', downloadPng);
-document.getElementById('download-pptx').addEventListener('click', downloadPptx);
