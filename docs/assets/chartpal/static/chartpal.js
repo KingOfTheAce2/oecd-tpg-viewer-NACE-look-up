@@ -29,6 +29,7 @@ function parseCsvText(text) {
     headers.forEach((h, i) => {
       obj[h.trim()] = r[i] ? r[i].trim() : '';
     });
+    if (obj.parent_id === '') obj.parent_id = '0';
     return obj;
   });
 }
@@ -138,4 +139,12 @@ function downloadCsv() {
 }
 
 document.getElementById('download-csv').addEventListener('click', downloadCsv);
+
+document.addEventListener('DOMContentLoaded', () => {
+  const sample = document.getElementById('sample-data');
+  if (sample) {
+    const records = parseCsvText(sample.textContent);
+    updateCountryDropdown(records);
+  }
+});
 
