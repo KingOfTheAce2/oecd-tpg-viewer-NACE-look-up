@@ -1,15 +1,15 @@
 // Minimal ASCII-based organisational chart builder
-let currentCsvText = '';
-const countryNames = {
-  US: 'United States',
-  DE: 'Germany',
-  GB: 'United Kingdom',
-  FR: 'France',
-  ES: 'Spain',
-  IT: 'Italy',
-  NL: 'Netherlands',
-  BE: 'Belgium'
-};
+let countryNames = {};
+
+async function loadCountryNames(url = 'countryNames.json') {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('Could not load country names');
+    countryNames = await response.json();
+  } catch (e) {
+    console.error('Failed to load country names:', e);
+  }
+}
 
 function readCsv(file) {
   return new Promise((resolve, reject) => {
