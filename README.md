@@ -50,8 +50,10 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
     /naics
       naics_data.json      # Dataset of NAICS codes
       naics-app.js         # React app for the NAICS finder
-    /chartpal_static
-      chartpal.js          # Browser-based organisational chart builder
+    /chartpal
+      app.py               # Simple Flask backend
+      /static
+        chartpal.js        # Browser-based organisational chart builder
 ```
 
 ## Notes
