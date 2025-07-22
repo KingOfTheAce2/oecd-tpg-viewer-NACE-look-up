@@ -1,3 +1,4 @@
+
 // Minimal ASCII-based organisational chart builder
 let countryNames = {};
 
@@ -22,20 +23,14 @@ function readCsv(file) {
 }
 
 function parseCsvText(text) {
-  const rows = text.trim().split(/\r?\n/).map(r => r.split(','));
-  const headers = rows.shift();
-  return rows.map(r => {
-    const obj = {};
-    headers.forEach((h, i) => {
-      obj[h.trim()] = r[i] ? r[i].trim() : '';
-    });
-    if (obj.parent_id === '') obj.parent_id = '0';
-    return obj;
+  return Papa.parse(text.trim(), { header: true }).data.map(r => {
+    if (!r.parent_id) r.parent_id = '0';
+    return r;
   });
 }
 
 function parseOwnership(value) {
-  if (!value && value !== 0) return null;
+  if (value == null || value === '') return null;
   let v = value.toString().trim();
   if (v.endsWith('%')) v = v.slice(0, -1);
   let num = parseFloat(v);
@@ -106,13 +101,14 @@ function updateCountryDropdown(records) {
 }
 
 async function handleGenerate() {
+  await loadCountryNames();
   const file = document.getElementById('csvfile').files[0];
   const textArea = document.getElementById('csvtext');
   let text = textArea.value.trim();
   try {
     if (file) text = await readCsv(file);
     if (!text) {
-      alert('Please provide CSV data.');
+      showError('Please provide CSV data.');
       return;
     }
     currentCsvText = text;
@@ -120,8 +116,9 @@ async function handleGenerate() {
     const root = buildHierarchy(records);
     document.getElementById('ascii-chart').textContent = asciiTree(root);
     updateCountryDropdown(records);
+    showError('');
   } catch (err) {
-    alert('Failed to parse CSV: ' + err);
+    showError('Failed to parse CSV: ' + err);
   }
 }
 
@@ -140,11 +137,16 @@ function downloadCsv() {
 
 document.getElementById('download-csv').addEventListener('click', downloadCsv);
 
-document.addEventListener('DOMContentLoaded', () => {
+function showError(msg) {
+  const box = document.getElementById('error-box');
+  if (box) box.textContent = msg;
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadCountryNames();
   const sample = document.getElementById('sample-data');
   if (sample) {
     const records = parseCsvText(sample.textContent);
     updateCountryDropdown(records);
   }
 });
-
