@@ -1,8 +1,9 @@
 
 // Minimal ASCII-based organisational chart builder
 let countryNames = {};
+let currentCsvText = '';
 
-async function loadCountryNames(url = 'countryNames.json') {
+async function loadCountryNames(url = 'country_names.json') {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error('Could not load country names');
