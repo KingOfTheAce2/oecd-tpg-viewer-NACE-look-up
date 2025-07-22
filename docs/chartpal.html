@@ -1,44 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>ChartPal</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="assets/style.css" />
-  <link rel="stylesheet" href="assets/chartpal/style.css" />
-  <style>
-    body { max-width: none; }
-    #ascii-chart { width:90%;max-width:800px;margin:20px auto;padding:10px;background:#f7f7f7;overflow:auto; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChartPal - Org Chart Builder</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 </head>
 <body>
-  <div style="text-align:center;margin-bottom:20px;">
-    <a class="app-link" href="index.html">Home</a>
-  </div>
-  <h1 style="text-align:center;">ChartPal</h1>
-  <p style="text-align:center;">Upload a CSV file or paste CSV text with <code>id,parent_id,name,ownership%,jurisdiction</code> columns to generate an organisational chart entirely in your browser. The <code>ownership%</code> field accepts values like <code>25%</code> or <code>0.25</code>.</p>
-  <pre id="sample-data" style="width:90%;max-width:800px;margin:0 auto 10px auto;background:#f7f7f7;padding:10px;overflow:auto;">
-id,parent_id,name,ownership%,jurisdiction
-1,0,Parent Co,100%,US
-2,1,Subsidiary,80%,DE
-</pre>
-  <div style="text-align:center;margin-bottom:10px;">
-    <input type="file" id="csvfile" accept=".csv" style="width:200px;" />
-  </div>
-  <div style="text-align:center;margin-bottom:10px;">
-    <textarea id="csvtext" rows="6" style="width:90%;max-width:800px;" placeholder="id,parent_id,name,ownership%,jurisdiction&#10;1,0,Parent Co,100%,US&#10;2,1,Subsidiary,80%,DE"></textarea>
-  </div>
-  <div style="text-align:center;margin-bottom:20px;">
-    <button id="generate" class="app-link">Generate Chart</button>
-    <button id="download-csv" class="app-link">Download CSV</button>
-  </div>
-  <div style="text-align:center;margin-bottom:10px;">
-    <label for="country-info">Jurisdictions:</label>
-    <select id="country-info"></select>
-  </div>
-  <div id="error-box" style="color:red;margin-bottom:10px;text-align:center;"></div>
-  <pre id="ascii-chart"></pre>
-  <script src="assets/chartpal/papaparse.min.js"></script>
-  <script src="assets/chartpal/chartpal.js"></script>
+    <h1>ChartPal 🏢 Organizational Chart Builder</h1>
+
+    <div class="container">
+        <div class="panel input-panel">
+            <h2>1. Input CSV Data</h2>
+            <p>Use the format: <code>id,parent_id,name,ownership%,jurisdiction</code></p>
+            <textarea id="csvtext" rows="10" placeholder="Or paste your CSV data here...">id,parent_id,name,ownership%,jurisdiction
+1,0,Global Holdings Inc.,100%,US
+2,1,EU Operations B.V.,100%,NL
+3,1,APAC Services Ltd.,100%,SG
+4,2,German Subsidiary GmbH,80%,DE
+5,2,French Branch SAS,90%,FR
+6,4,Austrian Division,100%,AT</textarea>
+            <label for="csvfile" class="file-label">Or Upload a CSV File</label>
+            <input type="file" id="csvfile" accept=".csv">
+        </div>
+
+        <div class="panel controls-panel">
+            <h2>2. Controls & Reference</h2>
+            
+            <div class="control-group">
+                <label>Chart Format:</label>
+                <input type="radio" id="format-tree" name="format" value="tree" checked>
+                <label for="format-tree">🌳 Tree View</label>
+                <input type="radio" id="format-box" name="format" value="box">
+                <label for="format-box">📦 Box View</label>
+            </div>
+            
+            <button id="generate" class="action-button">Generate Chart</button>
+            <button id="download-csv">Download CSV</button>
+
+            <details class="jurisdiction-details">
+                <summary>Jurisdiction Code Reference</summary>
+                <input type="text" id="jurisdiction-search" placeholder="Search for country or code...">
+                <ul id="jurisdiction-list">
+                    </ul>
+            </details>
+        </div>
+    </div>
+    
+    <div class="panel output-panel">
+        <div class="output-header">
+             <h2>3. Generated Chart</h2>
+             <div class="zoom-controls">
+                <button id="zoom-out" title="Zoom Out">-</button>
+                <span id="zoom-level">100%</span>
+                <button id="zoom-in" title="Zoom In">+</button>
+            </div>
+        </div>
+        <div id="chart-container">
+            <pre id="chart-output"></pre>
+        </div>
+        <div id="error-box"></div>
+    </div>
+
+    <script src="chartpal.js"></script>
 </body>
 </html>
