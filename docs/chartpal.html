@@ -5,6 +5,7 @@
   <title>ChartPal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/chartpal/style.css" />
   <style>
     body { max-width: none; }
     #ascii-chart { width:90%;max-width:800px;margin:20px auto;padding:10px;background:#f7f7f7;overflow:auto; }
@@ -35,7 +36,9 @@ id,parent_id,name,ownership%,jurisdiction
     <label for="country-info">Jurisdictions:</label>
     <select id="country-info"></select>
   </div>
+  <div id="error-box" style="color:red;margin-bottom:10px;text-align:center;"></div>
   <pre id="ascii-chart"></pre>
-  <script src="assets/chartpal/static/chartpal.js"></script>
+  <script src="assets/chartpal/papaparse.min.js"></script>
+  <script src="assets/chartpal/chartpal.js"></script>
 </body>
 </html>
