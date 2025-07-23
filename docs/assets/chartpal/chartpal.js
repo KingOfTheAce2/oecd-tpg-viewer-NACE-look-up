@@ -9,12 +9,16 @@ async function loadCountryNames(url = 'assets/chartpal/country_names.json') {
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error('Could not load country names');
-        const data = await response.json();
-        // Convert array of objects to a simple { "code": "Name" } object
-        countryNames = data.reduce((acc, country) => {
-            acc[country.code] = country.name;
-            return acc;
-        }, {});
+    const data = await response.json();
+        // Handle both array-of-objects and plain object structures
+        if (Array.isArray(data)) {
+            countryNames = data.reduce((acc, country) => {
+                acc[country.code] = country.name;
+                return acc;
+            }, {});
+        } else {
+            countryNames = data;
+        }
         if (document.getElementById('jurisdiction-list')) {
             populateJurisdictionReference();
         }
@@ -224,6 +228,10 @@ function filterJurisdictionList() {
 // --- NEW Globals & State Management ---
 let chartNodes = new Map(); // Stores node data { id, name, parent_id, etc. }
 let chartLines = []; // Stores the LeaderLine instances
+let selectedNodeId = null; // Currently selected node
+let connectMode = false;
+let connectParentId = null;
+let canvasScale = 1;
 
 // --- Main function to draw the chart from data ---
 function drawChartFromData(records) {
@@ -267,14 +275,16 @@ function renderNode(nodeData, x, y) {
     const nodeEl = document.createElement('div');
     nodeEl.id = `node-${nodeData.id}`;
     nodeEl.className = 'chart-node';
+    nodeEl.dataset.id = nodeData.id;
     nodeEl.style.left = `${x}px`;
     nodeEl.style.top = `${y}px`;
 
     // Populate the box content
-    const flag = nodeData.jurisdiction ? countryFlagEmoji(nodeData.jurisdiction) + ' ' : '';
+    const flag = nodeData.jurisdiction ? countryFlagEmoji(nodeData.jurisdiction) : '';
     nodeEl.innerHTML = `
-        <strong>${nodeData.name || 'Unnamed'}</strong><br>
-        <small>${flag}${nodeData.jurisdiction || 'N/A'}</small>
+        <span class="flag">${flag}</span>
+        <div class="company-name">${nodeData.name || 'Unnamed'}</div>
+        <div class="jurisdiction">${nodeData.jurisdiction || 'N/A'}</div>
     `;
 
     canvas.appendChild(nodeEl);
@@ -282,6 +292,28 @@ function renderNode(nodeData, x, y) {
 
     // Make the node draggable (simple implementation)
     makeDraggable(nodeEl);
+
+    nodeEl.addEventListener('click', () => {
+        if (connectMode) {
+            if (!connectParentId) {
+                connectParentId = nodeData.id;
+                nodeEl.classList.add('selected');
+            } else {
+                if (connectParentId !== nodeData.id) {
+                    const childData = chartNodes.get(nodeData.id);
+                    childData.parent_id = connectParentId;
+                    redrawLines();
+                }
+                document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
+                connectParentId = null;
+                connectMode = false;
+            }
+        } else {
+            document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
+            selectedNodeId = nodeData.id;
+            nodeEl.classList.add('selected');
+        }
+    });
     
     // Render children recursively (simple vertical layout)
     let childY = y + 150;
@@ -325,6 +357,21 @@ function makeDraggable(element) {
     }
 }
 
+function redrawLines() {
+    chartLines.forEach(l => l.remove());
+    chartLines = [];
+    chartNodes.forEach(node => {
+        if (node.parent_id && chartNodes.has(node.parent_id)) {
+            const parentEl = document.getElementById(`node-${node.parent_id}`);
+            const childEl = document.getElementById(`node-${node.id}`);
+            const line = new LeaderLine(parentEl, childEl, {
+                middleLabel: LeaderLine.pathLabel(`${node.ownership || 100}%`)
+            });
+            chartLines.push(line);
+        }
+    });
+}
+
 // --- NEW: Function to export the visual chart to CSV ---
 function exportToCsv() {
     const headers = "id,parent_id,name,ownership%,jurisdiction";
@@ -359,7 +406,13 @@ function exportToCsv() {
 
 // --- REVISED: Event handler to import from CSV text area ---
 async function handleImport() {
-    const text = document.getElementById('csvtext').value.trim();
+    let text = document.getElementById('csvtext').value.trim();
+    const fileInput = document.getElementById('csvfile');
+    if (fileInput && fileInput.files.length > 0) {
+        const file = fileInput.files[0];
+        text = await file.text();
+        document.getElementById('csvtext').value = text;
+    }
     if (!text) {
         showError('CSV data is empty.');
         return;
@@ -386,11 +439,63 @@ function handleAddNode() {
         children: []
     };
     renderNode(newNodeData, 50, 50); // Add at a default position
-    
+
     // Also update the tree view
     const allRecords = Array.from(chartNodes.values());
     const root = buildHierarchy(allRecords);
     document.getElementById('tree-output-display').textContent = generateTreeOutput(root);
+    redrawLines();
+}
+
+function handleChangeJurisdiction() {
+    if (!selectedNodeId) return;
+    const code = prompt('Enter jurisdiction code (e.g. US):');
+    if (!code) return;
+    const node = chartNodes.get(selectedNodeId);
+    node.jurisdiction = code.toUpperCase();
+    const el = document.getElementById(`node-${selectedNodeId}`);
+    if (el) {
+        el.querySelector('.flag').textContent = countryFlagEmoji(node.jurisdiction);
+        el.querySelector('.jurisdiction').textContent = node.jurisdiction;
+    }
+}
+
+function toggleConnectMode() {
+    connectMode = !connectMode;
+    connectParentId = null;
+    document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
+}
+
+function zoomCanvas(delta) {
+    canvasScale = Math.max(0.2, Math.min(3, canvasScale + delta));
+    document.getElementById('canvas').style.transform = `scale(${canvasScale})`;
+}
+
+function initCanvasPan() {
+    const canvas = document.getElementById('canvas');
+    let isPanning = false;
+    let startX = 0, startY = 0, scrollLeft = 0, scrollTop = 0;
+    canvas.addEventListener('mousedown', e => {
+        if (e.target === canvas) {
+            isPanning = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            scrollLeft = canvas.scrollLeft;
+            scrollTop = canvas.scrollTop;
+            canvas.style.cursor = 'grabbing';
+        }
+    });
+    document.addEventListener('mousemove', e => {
+        if (!isPanning) return;
+        canvas.scrollLeft = scrollLeft - (e.clientX - startX);
+        canvas.scrollTop = scrollTop - (e.clientY - startY);
+    });
+    document.addEventListener('mouseup', () => {
+        if (isPanning) {
+            isPanning = false;
+            canvas.style.cursor = 'grab';
+        }
+    });
 }
 
 
@@ -402,6 +507,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('import-from-csv').addEventListener('click', handleImport);
     document.getElementById('export-csv').addEventListener('click', exportToCsv);
     document.getElementById('add-node').addEventListener('click', handleAddNode);
+    document.getElementById('connect-nodes').addEventListener('click', toggleConnectMode);
+    document.getElementById('change-jurisdiction').addEventListener('click', handleChangeJurisdiction);
+    document.getElementById('zoom-in').addEventListener('click', () => zoomCanvas(0.1));
+    document.getElementById('zoom-out').addEventListener('click', () => zoomCanvas(-0.1));
+    initCanvasPan();
 
     const initial = document.getElementById('csvtext').value.trim();
     if (initial) {
