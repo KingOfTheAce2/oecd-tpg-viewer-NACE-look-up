@@ -6,6 +6,7 @@ let currentZoom = 100; // Zoom level in percent
 let undoStack = [];
 let redoStack = [];
 let selectedNodeIds = new Set();
+let spacePressed = false; // track space key for panning
 
 function pushHistory(action) {
     undoStack.push(action);
@@ -745,6 +746,8 @@ function handleDeleteSelected() {
 }
 
 function handleShortcuts(e) {
+    const active = document.activeElement;
+    if (active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA')) return;
     if (e.ctrlKey && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); return; }
     if ((e.ctrlKey && e.key.toLowerCase() === 'y') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'z')) { e.preventDefault(); redo(); return; }
     if (e.key === 'Delete') { e.preventDefault(); handleDeleteSelected(); return; }
@@ -928,14 +931,16 @@ function initCanvasPan() {
     const canvas = document.getElementById('canvas');
     let isPanning = false;
     let startX = 0, startY = 0, scrollLeft = 0, scrollTop = 0;
+    canvas.style.cursor = 'grab';
     canvas.addEventListener('mousedown', e => {
-        if (e.target === canvas) {
+        if (e.target === canvas || spacePressed) {
             isPanning = true;
             startX = e.clientX;
             startY = e.clientY;
             scrollLeft = canvas.scrollLeft;
             scrollTop = canvas.scrollTop;
             canvas.style.cursor = 'grabbing';
+            if (spacePressed) e.preventDefault();
         }
     });
     document.addEventListener('mousemove', e => {
@@ -991,6 +996,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initCanvasPan();
 
     document.addEventListener('keydown', handleShortcuts);
+    document.addEventListener('keydown', e => { if (e.code === 'Space') spacePressed = true; });
+    document.addEventListener('keyup', e => { if (e.code === 'Space') spacePressed = false; });
 
     loadChartLocal();
 

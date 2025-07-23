@@ -102,6 +102,18 @@
     margin-top: 0;
 }
 
+.action-buttons,
+.history-controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-bottom: 10px;
+}
+.action-buttons button,
+.history-controls button {
+    margin-top: 0;
+}
+
 #zoom-input {
     width: 80px;
     font-size: 0.9em;
