@@ -342,18 +342,23 @@ function renderNode(nodeData, x, y) {
     const nodeEl = document.createElement('div');
     nodeEl.id = `node-${safeId(nodeData.id)}`;
     nodeEl.className = 'chart-node';
+    if (nodeData.isBranch) nodeEl.classList.add('branch-node');
     nodeEl.dataset.id = nodeData.id;
     nodeEl.style.left = `${x}px`;
     nodeEl.style.top = `${y}px`;
 
     // Populate the box content
-    const flag = nodeData.jurisdiction ? countryFlagEmoji(nodeData.jurisdiction) : '';
-    const jurName = getJurisdictionName(nodeData.jurisdiction);
-    nodeEl.innerHTML = `
-        <span class="flag">${flag}</span>
-        <div class="company-name">${nodeData.name || 'Unnamed'}</div>
-        <div class="jurisdiction">${jurName}</div>
-    `;
+    if (nodeData.isBranch) {
+        nodeEl.textContent = nodeData.name || 'Branch';
+    } else {
+        const flag = nodeData.jurisdiction ? countryFlagEmoji(nodeData.jurisdiction) : '';
+        const jurName = getJurisdictionName(nodeData.jurisdiction);
+        nodeEl.innerHTML = `
+            <span class="flag">${flag}</span>
+            <div class="company-name">${nodeData.name || 'Unnamed'}</div>
+            <div class="jurisdiction">${jurName}</div>
+        `;
+    }
 
     canvas.appendChild(nodeEl);
     if (window.twemoji) twemoji.parse(nodeEl);
@@ -532,6 +537,20 @@ function handleAddNode() {
     redrawLines();
 }
 
+function handleAddBranch() {
+    const newId = (Math.max(0, ...Array.from(chartNodes.keys()).map(k => parseInt(k))) + 1).toString();
+    const newNodeData = {
+        id: newId,
+        parent_id: '0',
+        name: `Branch ${newId}`,
+        isBranch: true,
+        children: []
+    };
+    renderNode(newNodeData, 50, 50);
+    updateTreeView();
+    redrawLines();
+}
+
 function handleChangeJurisdiction() {
     if (!selectedNodeId) return;
     const input = document.getElementById('jurisdiction-input');
@@ -661,6 +680,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('import-from-csv').addEventListener('click', handleImport);
     document.getElementById('export-csv').addEventListener('click', exportToCsv);
     document.getElementById('add-node').addEventListener('click', handleAddNode);
+    const branchBtn = document.getElementById('add-branch');
+    if (branchBtn) branchBtn.addEventListener('click', handleAddBranch);
     document.getElementById('connect-nodes').addEventListener('click', toggleConnectMode);
     document.getElementById('change-jurisdiction').addEventListener('click', handleChangeJurisdiction);
     document.getElementById('change-name').addEventListener('click', handleChangeName);

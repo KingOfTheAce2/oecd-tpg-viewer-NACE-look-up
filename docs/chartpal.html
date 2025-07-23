@@ -6,11 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="assets/style.css" />
   <link rel="stylesheet" href="assets/chartpal/style.css" />
+  <style>
+    body.chartpal-page { max-width: none; margin: 20px; }
+    body.chartpal-page .main-container { height: 80vh; }
+  </style>
   <script src="assets/chartpal/papaparse.min.js"></script>
   <script src="assets/chartpal/leader-line.min.js"></script>
   <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 </head>
-<body>
+<body class="chartpal-page">
   <div style="text-align:center;margin-bottom:20px;">
     <a class="app-link" href="index.html">Home</a>
   </div>
@@ -28,6 +32,7 @@
     <div class="controls-pane">
       <h2>Controls</h2>
       <button id="add-node">Add Company Box</button>
+      <button id="add-branch">Add Branch</button>
       <button id="connect-nodes">Connect Boxes</button>
       <div style="margin-top:10px;">
         <input id="jurisdiction-input" list="jurisdictions" placeholder="Select jurisdiction" />
