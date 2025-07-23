@@ -1,27 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>ChartPal - Interactive Org Chart Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/style.css" />
+  <link rel="stylesheet" href="assets/chartpal/style.css" />
+  <script src="assets/chartpal/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leader-line@1.0.7/leader-line.min.js"></script>
+</head>
 <body>
-    <h1>ChartPal - Interactive Org Chart Builder</h1>
+  <div style="text-align:center;margin-bottom:20px;">
+    <a class="app-link" href="index.html">Home</a>
+  </div>
+  <h1 style="text-align:center;">ChartPal - Interactive Org Chart Builder</h1>
 
-    <div class="main-container">
-        <div class="editor-pane">
-            <div id="canvas" class="editor-canvas">
-                </div>
-        </div>
-
-        <div class="controls-pane">
-            <h2>Controls</h2>
-            <button id="add-node">Add Company Box</button>
-            <button id="export-csv">Export to CSV</button>
-            <hr>
-            <h2>Tree View</h2>
-            <pre id="tree-output-display"></pre> </div>
+  <div class="main-container">
+    <div class="editor-pane">
+      <div id="canvas" class="editor-canvas"></div>
     </div>
-
-    <div class="data-pane">
-        <h2>CSV Data</h2>
-        <p>You can paste CSV data here and click 'Import' to draw the chart, or edit the chart visually and click 'Export to CSV'.</p>
-        <textarea id="csvtext" rows="10" placeholder="id,parent_id,name,ownership%,jurisdiction..."></textarea>
-        <button id="import-from-csv">Import from CSV</button>
-        <div id="error-box" class="error"></div>
+    <div class="controls-pane">
+      <h2>Controls</h2>
+      <button id="add-node">Add Company Box</button>
+      <button id="export-csv">Export to CSV</button>
+      <hr>
+      <h2>Tree View</h2>
+      <pre id="tree-output-display"></pre>
     </div>
+  </div>
 
-    </body>
+  <div class="data-pane">
+    <h2>CSV Data</h2>
+    <p>You can paste CSV data here and click 'Import' to draw the chart, or edit the chart visually and click 'Export to CSV'.</p>
+    <textarea id="csvtext" rows="10" placeholder="id,parent_id,name,ownership%,jurisdiction..."></textarea>
+    <button id="import-from-csv">Import from CSV</button>
+    <div id="error-box" class="error"></div>
+  </div>
+
+  <script src="assets/chartpal/chartpal.js"></script>
+</body>
+</html>

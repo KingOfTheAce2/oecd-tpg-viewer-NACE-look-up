@@ -15,7 +15,9 @@ async function loadCountryNames(url = 'assets/chartpal/country_names.json') {
             acc[country.code] = country.name;
             return acc;
         }, {});
-        populateJurisdictionReference();
+        if (document.getElementById('jurisdiction-list')) {
+            populateJurisdictionReference();
+        }
     } catch (e) {
         console.error('Failed to load country names:', e);
         showError('Could not load country reference list.');
@@ -192,6 +194,7 @@ function updateZoom(newZoom) {
 
 function populateJurisdictionReference() {
     const list = document.getElementById('jurisdiction-list');
+    if (!list) return;
     list.innerHTML = ''; // Clear existing
     Object.entries(countryNames).forEach(([code, name]) => {
         const li = document.createElement('li');
@@ -202,7 +205,9 @@ function populateJurisdictionReference() {
 }
 
 function filterJurisdictionList() {
-    const filter = document.getElementById('jurisdiction-search').value.toLowerCase();
+    const search = document.getElementById('jurisdiction-search');
+    if (!search) return;
+    const filter = search.value.toLowerCase();
     const items = document.querySelectorAll('#jurisdiction-list li');
     items.forEach(item => {
         if (item.dataset.search.includes(filter)) {
@@ -215,20 +220,6 @@ function filterJurisdictionList() {
 
 // --- INITIALIZATION ---
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Load external data
-    loadCountryNames();
-
-    // Setup event listeners
-    document.getElementById('generate').addEventListener('click', handleGenerate);
-    document.getElementById('download-csv').addEventListener('click', downloadCsv);
-    document.getElementById('zoom-in').addEventListener('click', () => updateZoom(currentZoom + 10));
-    document.getElementById('zoom-out').addEventListener('click', () => updateZoom(currentZoom - 10));
-    document.getElementById('jurisdiction-search').addEventListener('input', filterJurisdictionList);
-    
-    // Auto-generate chart from sample data on load
-    handleGenerate();
-});
 
 // --- NEW Globals & State Management ---
 let chartNodes = new Map(); // Stores node data { id, name, parent_id, etc. }
@@ -412,7 +403,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('export-csv').addEventListener('click', exportToCsv);
     document.getElementById('add-node').addEventListener('click', handleAddNode);
 
-    // Initial load with sample data
-    // The old handleGenerate can be renamed to handleImport
-    handleImport(); 
+    const initial = document.getElementById('csvtext').value.trim();
+    if (initial) {
+        handleImport();
+    }
 });
