@@ -8,12 +8,14 @@
   <link rel="stylesheet" href="assets/chartpal/style.css" />
   <script src="assets/chartpal/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/leader-line@1.0.7/leader-line.min.js"></script>
+  <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
 </head>
 <body>
   <div style="text-align:center;margin-bottom:20px;">
     <a class="app-link" href="index.html">Home</a>
   </div>
   <h1 style="text-align:center;">ChartPal - Interactive Org Chart Builder</h1>
+  <p class="legend" style="text-align:center;">Solid line = 100% ownership, dotted line = less than 100% ownership.</p>
 
   <div class="main-container">
     <div class="editor-pane">
@@ -27,6 +29,10 @@
         <input id="jurisdiction-input" list="jurisdictions" placeholder="Select jurisdiction" />
         <datalist id="jurisdictions"></datalist>
         <button id="change-jurisdiction">Set Jurisdiction</button>
+      </div>
+      <div style="margin-top:10px;">
+        <input id="company-name-input" placeholder="Company name" />
+        <button id="change-name">Set Name</button>
       </div>
       <button id="export-csv">Export to CSV</button>
       <div style="margin-top:10px;">

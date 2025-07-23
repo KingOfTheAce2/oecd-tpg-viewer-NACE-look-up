@@ -14,6 +14,7 @@
     height: 100%;
     overflow: auto;
     cursor: grab;
+    transform-origin: top left;
 }
 .controls-pane {
     width: 350px;
@@ -64,4 +65,9 @@
 }
 .chart-node.selected {
     border-color: #007bff;
+}
+
+.legend {
+    margin-top: 5px;
+    font-size: 0.9em;
 }

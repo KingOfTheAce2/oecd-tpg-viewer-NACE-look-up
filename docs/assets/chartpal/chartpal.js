@@ -209,6 +209,7 @@ function populateJurisdictionReference() {
         li.dataset.search = `${code} ${name}`.toLowerCase();
         list.appendChild(li);
     });
+    if (window.twemoji) twemoji.parse(list);
 }
 
 function filterJurisdictionList() {
@@ -233,8 +234,11 @@ function populateJurisdictionDatalist() {
         const opt = document.createElement('option');
         opt.value = name;
         opt.dataset.code = code;
+        opt.label = `${countryFlagEmoji(code)} ${name}`;
+        opt.textContent = `${countryFlagEmoji(code)} ${name}`;
         datalist.appendChild(opt);
     });
+    if (window.twemoji) twemoji.parse(datalist);
 }
 
 function getJurisdictionName(code) {
@@ -281,16 +285,27 @@ function drawChartFromData(records) {
     // 4. Draw connecting lines
     chartNodes.forEach(node => {
         if (node.parent_id && chartNodes.has(node.parent_id)) {
-            const parentEl = document.getElementById(`node-${node.parent_id}`);
-            const childEl = document.getElementById(`node-${node.id}`);
+        const parentEl = document.getElementById(`node-${node.parent_id}`);
+        const childEl = document.getElementById(`node-${node.id}`);
 
-            const line = new LeaderLine(parentEl, childEl, {
-                color: '#007bff',
-                size: 2,
-                path: 'grid',
-                middleLabel: LeaderLine.pathLabel(`${node.ownership || 100}%`)
-            });
-            chartLines.push(line);
+        const label = LeaderLine.pathLabel(`${node.ownership || 100}%`);
+        label.style.fontSize = '14px';
+        const options = {
+            color: '#007bff',
+            size: 2,
+            path: 'straight',
+            startSocket: 'bottom',
+            endSocket: 'top',
+            middleLabel: label
+        };
+        if (node.ownership && node.ownership < 100) {
+            options.dash = {len: 4, gap: 4};
+        }
+        const line = new LeaderLine(parentEl, childEl, options);
+        if (line.middleLabel && line.middleLabel.nodeType === 1) {
+            line.middleLabel.style.transform = `scale(${1 / canvasScale})`;
+        }
+        chartLines.push(line);
         }
     });
     
@@ -318,6 +333,7 @@ function renderNode(nodeData, x, y) {
     `;
 
     canvas.appendChild(nodeEl);
+    if (window.twemoji) twemoji.parse(nodeEl);
     chartNodes.set(nodeData.id, nodeData); // Add to our state map
 
     // Make the node draggable (simple implementation)
@@ -395,12 +411,23 @@ function redrawLines() {
         if (node.parent_id && chartNodes.has(node.parent_id)) {
             const parentEl = document.getElementById(`node-${node.parent_id}`);
             const childEl = document.getElementById(`node-${node.id}`);
-            const line = new LeaderLine(parentEl, childEl, {
+            const label = LeaderLine.pathLabel(`${node.ownership || 100}%`);
+            label.style.fontSize = '14px';
+            const options = {
                 color: '#007bff',
                 size: 2,
-                path: 'grid',
-                middleLabel: LeaderLine.pathLabel(`${node.ownership || 100}%`)
-            });
+                path: 'straight',
+                startSocket: 'bottom',
+                endSocket: 'top',
+                middleLabel: label
+            };
+            if (node.ownership && node.ownership < 100) {
+                options.dash = {len: 4, gap: 4};
+            }
+            const line = new LeaderLine(parentEl, childEl, options);
+            if (line.middleLabel && line.middleLabel.nodeType === 1) {
+                line.middleLabel.style.transform = `scale(${1 / canvasScale})`;
+            }
             chartLines.push(line);
         }
     });
@@ -499,6 +526,23 @@ function handleChangeJurisdiction() {
     if (el) {
         el.querySelector('.flag').textContent = countryFlagEmoji(code);
         el.querySelector('.jurisdiction').textContent = getJurisdictionName(code);
+        if (window.twemoji) twemoji.parse(el);
+    }
+    input.value = '';
+    updateTreeView();
+}
+
+function handleChangeName() {
+    if (!selectedNodeId) return;
+    const input = document.getElementById('company-name-input');
+    if (!input) return;
+    const value = input.value.trim();
+    if (!value) return;
+    const node = chartNodes.get(selectedNodeId);
+    node.name = value;
+    const el = document.getElementById(`node-${selectedNodeId}`);
+    if (el) {
+        el.querySelector('.company-name').textContent = value;
     }
     input.value = '';
     updateTreeView();
@@ -513,7 +557,12 @@ function toggleConnectMode() {
 function zoomCanvas(delta) {
     canvasScale = Math.max(0.2, Math.min(3, canvasScale + delta));
     document.getElementById('canvas').style.transform = `scale(${canvasScale})`;
-    chartLines.forEach(line => line.position());
+    chartLines.forEach(line => {
+        line.position();
+        if (line.middleLabel && line.middleLabel.nodeType === 1) {
+            line.middleLabel.style.transform = `scale(${1 / canvasScale})`;
+        }
+    });
     const disp = document.getElementById('zoom-display');
     if (disp) disp.textContent = Math.round(canvasScale * 100) + '%';
 }
@@ -556,9 +605,12 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-node').addEventListener('click', handleAddNode);
     document.getElementById('connect-nodes').addEventListener('click', toggleConnectMode);
     document.getElementById('change-jurisdiction').addEventListener('click', handleChangeJurisdiction);
+    document.getElementById('change-name').addEventListener('click', handleChangeName);
     document.getElementById('zoom-in').addEventListener('click', () => zoomCanvas(0.1));
     document.getElementById('zoom-out').addEventListener('click', () => zoomCanvas(-0.1));
     initCanvasPan();
+
+    if (window.twemoji) twemoji.parse(document.body);
 
     const initial = document.getElementById('csvtext').value.trim();
     if (initial) {
