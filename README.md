@@ -8,6 +8,12 @@ This repository contains a small static website with several tools:
 4. **Side‑by‑Side Viewer** – display the NACE and NAICS finders together for easy comparison.
 5. **Sankey Diagram Generator** – create simple Sankey diagrams from CSV/JSON data.
 6. **ChartPal** – A client-side organisational chart builder written in vanilla JavaScript.
+   The tool now supports undo/redo history, local saves, PNG/SVG export and
+   keyboard shortcuts. Hold <kbd>Shift</kbd> or <kbd>Ctrl</kbd> when clicking to
+   select multiple nodes. Useful shortcuts include:
+   <kbd>N</kbd> to add a node, <kbd>B</kbd> for a branch, <kbd>C</kbd> to connect,
+   <kbd>Delete</kbd> to remove, <kbd>Ctrl+Z</kbd>/<kbd>Ctrl+Y</kbd> for undo/redo
+   and <kbd>+</kbd>/<kbd>-</kbd> to zoom.
 
 The site is contained entirely in the `docs/` directory and can be used locally or hosted on any static web server.
 
