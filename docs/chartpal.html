@@ -1,68 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChartPal - Org Chart Builder</title>
-    <link rel="stylesheet" href="assets/chartpal/style.css">
-    <script src="assets/chartpal/papaparse.min.js"></script>
-</head>
 <body>
-    <h1>ChartPal 🏢 Organizational Chart Builder</h1>
+    <h1>ChartPal - Interactive Org Chart Builder</h1>
 
-    <div class="container">
-        <div class="panel input-panel">
-            <h2>1. Input CSV Data</h2>
-            <p>Use the format: <code>id,parent_id,name,ownership%,jurisdiction</code></p>
-            <textarea id="csvtext" rows="10" placeholder="Or paste your CSV data here...">id,parent_id,name,ownership%,jurisdiction
-1,0,Global Holdings Inc.,100%,US
-2,1,EU Operations B.V.,100%,NL
-3,1,APAC Services Ltd.,100%,SG
-4,2,German Subsidiary GmbH,80%,DE
-5,2,French Branch SAS,90%,FR
-6,4,Austrian Division,100%,AT</textarea>
-            <label for="csvfile" class="file-label">Or Upload a CSV File</label>
-            <input type="file" id="csvfile" accept=".csv">
+    <div class="main-container">
+        <div class="editor-pane">
+            <div id="canvas" class="editor-canvas">
+                </div>
         </div>
 
-        <div class="panel controls-panel">
-            <h2>2. Controls & Reference</h2>
-            
-            <div class="control-group">
-                <label>Chart Format:</label>
-                <input type="radio" id="format-tree" name="format" value="tree" checked>
-                <label for="format-tree">🌳 Tree View</label>
-                <input type="radio" id="format-box" name="format" value="box">
-                <label for="format-box">📦 Box View</label>
-            </div>
-            
-            <button id="generate" class="action-button">Generate Chart</button>
-            <button id="download-csv">Download CSV</button>
-
-            <details class="jurisdiction-details">
-                <summary>Jurisdiction Code Reference</summary>
-                <input type="text" id="jurisdiction-search" placeholder="Search for country or code...">
-                <ul id="jurisdiction-list">
-                    </ul>
-            </details>
-        </div>
-    </div>
-    
-    <div class="panel output-panel">
-        <div class="output-header">
-             <h2>3. Generated Chart</h2>
-             <div class="zoom-controls">
-                <button id="zoom-out" title="Zoom Out">-</button>
-                <span id="zoom-level">100%</span>
-                <button id="zoom-in" title="Zoom In">+</button>
-            </div>
-        </div>
-        <div id="chart-container">
-            <pre id="chart-output"></pre>
-        </div>
-        <div id="error-box"></div>
+        <div class="controls-pane">
+            <h2>Controls</h2>
+            <button id="add-node">Add Company Box</button>
+            <button id="export-csv">Export to CSV</button>
+            <hr>
+            <h2>Tree View</h2>
+            <pre id="tree-output-display"></pre> </div>
     </div>
 
-    <script src="assets/chartpal/chartpal.js"></script>
-</body>
-</html>
+    <div class="data-pane">
+        <h2>CSV Data</h2>
+        <p>You can paste CSV data here and click 'Import' to draw the chart, or edit the chart visually and click 'Export to CSV'.</p>
+        <textarea id="csvtext" rows="10" placeholder="id,parent_id,name,ownership%,jurisdiction..."></textarea>
+        <button id="import-from-csv">Import from CSV</button>
+        <div id="error-box" class="error"></div>
+    </div>
+
+    </body>
