@@ -618,16 +618,28 @@ function toggleConnectMode() {
 }
 
 function layoutGrid() {
-    const nodes = Array.from(chartNodes.keys());
-    const cols = 4;
-    nodes.forEach((id, idx) => {
-        const el = document.getElementById(`node-${safeId(id)}`);
-        if (!el) return;
-        const col = idx % cols;
-        const row = Math.floor(idx / cols);
-        el.style.left = `${50 + col * 200}px`;
-        el.style.top = `${50 + row * 150}px`;
+    // Rebuild hierarchy from current node data
+    const hierarchy = buildHierarchy(Array.from(chartNodes.values()));
+
+    let startY = 30;
+    function positionNode(node, x, y) {
+        const el = document.getElementById(`node-${safeId(node.id)}`);
+        if (el) {
+            el.style.left = `${x}px`;
+            el.style.top = `${y}px`;
+        }
+        let childY = y + 150;
+        node.children.forEach(child => {
+            positionNode(child, x + 200, childY);
+            childY += 150;
+        });
+    }
+
+    hierarchy.children.forEach(node => {
+        positionNode(node, 30, startY);
+        startY += 150;
     });
+
     redrawLines();
 }
 
