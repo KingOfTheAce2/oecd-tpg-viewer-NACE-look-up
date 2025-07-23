@@ -218,7 +218,7 @@ function populateJurisdictionReference() {
     list.innerHTML = ''; // Clear existing
     Object.entries(countryNames).forEach(([code, name]) => {
         const li = document.createElement('li');
-        li.textContent = `${countryFlagEmoji(code)} ${code} - ${name}`;
+        li.textContent = `${countryFlagEmoji(code)} ${name}`;
         li.dataset.search = `${code} ${name}`.toLowerCase();
         list.appendChild(li);
     });
@@ -312,7 +312,7 @@ function drawChartFromData(records) {
         const options = {
             color: '#007bff',
             size: 2,
-            path: 'straight',
+            path: 'grid',
             startSocket: 'bottom',
             endSocket: 'top',
             middleLabel: label
@@ -323,7 +323,9 @@ function drawChartFromData(records) {
         const line = new LeaderLine(parentEl, childEl, options);
         if (line.middleLabel && line.middleLabel.nodeType === 1) {
             line.middleLabel.style.transform = `scale(${1 / canvasScale})`;
+            line.middleLabel.style.pointerEvents = 'none';
         }
+        if (line.line) line.line.style.pointerEvents = 'none';
         chartLines.push(line);
         }
     });
@@ -437,7 +439,7 @@ function redrawLines() {
             const options = {
                 color: '#007bff',
                 size: 2,
-                path: 'straight',
+                path: 'grid',
                 startSocket: 'bottom',
                 endSocket: 'top',
                 middleLabel: label
@@ -448,7 +450,9 @@ function redrawLines() {
             const line = new LeaderLine(parentEl, childEl, options);
             if (line.middleLabel && line.middleLabel.nodeType === 1) {
                 line.middleLabel.style.transform = `scale(${1 / canvasScale})`;
+                line.middleLabel.style.pointerEvents = 'none';
             }
+            if (line.line) line.line.style.pointerEvents = 'none';
             chartLines.push(line);
         }
     });
@@ -594,6 +598,20 @@ function toggleConnectMode() {
     document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
 }
 
+function layoutGrid() {
+    const nodes = Array.from(chartNodes.keys());
+    const cols = 4;
+    nodes.forEach((id, idx) => {
+        const el = document.getElementById(`node-${safeId(id)}`);
+        if (!el) return;
+        const col = idx % cols;
+        const row = Math.floor(idx / cols);
+        el.style.left = `${50 + col * 200}px`;
+        el.style.top = `${50 + row * 150}px`;
+    });
+    redrawLines();
+}
+
 function zoomCanvas(delta) {
     canvasScale = Math.max(0.2, Math.min(3, canvasScale + delta));
     document.getElementById('canvas').style.transform = `scale(${canvasScale})`;
@@ -649,6 +667,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('change-ownership').addEventListener('click', handleChangeOwnership);
     document.getElementById('zoom-in').addEventListener('click', () => zoomCanvas(0.1));
     document.getElementById('zoom-out').addEventListener('click', () => zoomCanvas(-0.1));
+    document.getElementById('layout-grid').addEventListener('click', layoutGrid);
     initCanvasPan();
 
     if (window.twemoji) twemoji.parse(document.body);
