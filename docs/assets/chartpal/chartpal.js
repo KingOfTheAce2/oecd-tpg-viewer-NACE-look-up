@@ -229,3 +229,190 @@ document.addEventListener('DOMContentLoaded', () => {
     // Auto-generate chart from sample data on load
     handleGenerate();
 });
+
+// --- NEW Globals & State Management ---
+let chartNodes = new Map(); // Stores node data { id, name, parent_id, etc. }
+let chartLines = []; // Stores the LeaderLine instances
+
+// --- Main function to draw the chart from data ---
+function drawChartFromData(records) {
+    // 1. Clear existing canvas
+    const canvas = document.getElementById('canvas');
+    canvas.innerHTML = '';
+    chartLines.forEach(line => line.remove());
+    chartLines = [];
+    chartNodes.clear();
+
+    // 2. Create and store node data
+    const nodesData = buildHierarchy(records);
+    
+    // 3. Render boxes and store them in our map
+    let yPos = 30; // Initial vertical position
+    nodesData.children.forEach(nodeData => {
+        renderNode(nodeData, 30, yPos);
+        yPos += 150; // Stagger initial root nodes
+    });
+    
+    // 4. Draw connecting lines
+    chartNodes.forEach(node => {
+        if (node.parent_id && chartNodes.has(node.parent_id)) {
+            const parentEl = document.getElementById(`node-${node.parent_id}`);
+            const childEl = document.getElementById(`node-${node.id}`);
+            
+            const line = new LeaderLine(parentEl, childEl, {
+                middleLabel: LeaderLine.pathLabel(`${node.ownership || 100}%`)
+            });
+            chartLines.push(line);
+        }
+    });
+    
+    // 5. Update the side tree view
+    document.getElementById('tree-output-display').textContent = generateTreeOutput(nodesData);
+}
+
+// --- Renders a single node box on the canvas ---
+function renderNode(nodeData, x, y) {
+    const canvas = document.getElementById('canvas');
+    const nodeEl = document.createElement('div');
+    nodeEl.id = `node-${nodeData.id}`;
+    nodeEl.className = 'chart-node';
+    nodeEl.style.left = `${x}px`;
+    nodeEl.style.top = `${y}px`;
+
+    // Populate the box content
+    const flag = nodeData.jurisdiction ? countryFlagEmoji(nodeData.jurisdiction) + ' ' : '';
+    nodeEl.innerHTML = `
+        <strong>${nodeData.name || 'Unnamed'}</strong><br>
+        <small>${flag}${nodeData.jurisdiction || 'N/A'}</small>
+    `;
+
+    canvas.appendChild(nodeEl);
+    chartNodes.set(nodeData.id, nodeData); // Add to our state map
+
+    // Make the node draggable (simple implementation)
+    makeDraggable(nodeEl);
+    
+    // Render children recursively (simple vertical layout)
+    let childY = y + 150;
+    let childX = x + 50;
+    if (nodeData.children) {
+        nodeData.children.forEach(child => {
+            renderNode(child, childX, childY);
+            childY += 150; // Adjust spacing as needed
+        });
+    }
+}
+
+// --- Utility to make an element draggable ---
+function makeDraggable(element) {
+    let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    element.onmousedown = dragMouseDown;
+
+    function dragMouseDown(e) {
+        e.preventDefault();
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        document.onmouseup = closeDragElement;
+        document.onmousemove = elementDrag;
+    }
+
+    function elementDrag(e) {
+        e.preventDefault();
+        pos1 = pos3 - e.clientX;
+        pos2 = pos4 - e.clientY;
+        pos3 = e.clientX;
+        pos4 = e.clientY;
+        element.style.top = (element.offsetTop - pos2) + "px";
+        element.style.left = (element.offsetLeft - pos1) + "px";
+        // Update all connecting lines
+        chartLines.forEach(line => line.position());
+    }
+
+    function closeDragElement() {
+        document.onmouseup = null;
+        document.onmousemove = null;
+    }
+}
+
+// --- NEW: Function to export the visual chart to CSV ---
+function exportToCsv() {
+    const headers = "id,parent_id,name,ownership%,jurisdiction";
+    let csvContent = [headers];
+
+    // The buildHierarchy function already gives us a flat list with parent_id
+    // We can just iterate through our 'chartNodes' map
+    chartNodes.forEach(node => {
+        const row = [
+            node.id,
+            node.parent_id || '0',
+            `"${node.name}"`, // Quote names to handle commas
+            node.ownership || '',
+            node.jurisdiction || ''
+        ].join(',');
+        csvContent.push(row);
+    });
+
+    // Update the textarea and provide a download link
+    const csvText = csvContent.join('\n');
+    document.getElementById('csvtext').value = csvText;
+    
+    // Trigger download
+    const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'org-chart-export.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+// --- REVISED: Event handler to import from CSV text area ---
+async function handleImport() {
+    const text = document.getElementById('csvtext').value.trim();
+    if (!text) {
+        showError('CSV data is empty.');
+        return;
+    }
+    try {
+        const records = parseCsvText(text);
+        drawChartFromData(records); // NEW: This now draws the visual chart
+        showError(''); // Clear errors
+    } catch (err) {
+        showError('Failed to import chart: ' + err.message);
+        console.error(err);
+    }
+}
+
+// --- NEW: Add a blank node to the canvas ---
+function handleAddNode() {
+    const newId = (Math.max(0, ...Array.from(chartNodes.keys()).map(k => parseInt(k))) + 1).toString();
+    const newNodeData = {
+        id: newId,
+        parent_id: '0', // Root node by default
+        name: `New Company ${newId}`,
+        jurisdiction: 'US', // Default
+        ownership: 100,
+        children: []
+    };
+    renderNode(newNodeData, 50, 50); // Add at a default position
+    
+    // Also update the tree view
+    const allRecords = Array.from(chartNodes.values());
+    const root = buildHierarchy(allRecords);
+    document.getElementById('tree-output-display').textContent = generateTreeOutput(root);
+}
+
+
+// --- REVISED: Update DOMContentLoaded ---
+document.addEventListener('DOMContentLoaded', () => {
+    loadCountryNames();
+
+    // NEW event listeners
+    document.getElementById('import-from-csv').addEventListener('click', handleImport);
+    document.getElementById('export-csv').addEventListener('click', exportToCsv);
+    document.getElementById('add-node').addEventListener('click', handleAddNode);
+
+    // Initial load with sample data
+    // The old handleGenerate can be renamed to handleImport
+    handleImport(); 
+});
