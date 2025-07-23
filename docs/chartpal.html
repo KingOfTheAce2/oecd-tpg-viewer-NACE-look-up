@@ -21,6 +21,7 @@
   </div>
   <h1 style="text-align:center;">ChartPal - Interactive Org Chart Builder</h1>
   <p class="legend" style="text-align:center;">Solid line = 100% ownership, dotted line = less than 100% ownership.</p>
+  <p style="text-align:center;font-size:0.9em;">Keyboard shortcuts: <strong>N</strong> add entity,&nbsp;<strong>B</strong> add branch,&nbsp;<strong>C</strong> connect,&nbsp;<strong>Delete</strong> remove,&nbsp;<strong>Ctrl+Z/Ctrl+Y</strong> undo/redo,&nbsp;<strong>+</strong>/<strong>-</strong> zoom, hold <strong>Space</strong> and drag to pan.</p>
 
   <div class="main-container">
     <div class="tree-pane">
@@ -32,9 +33,12 @@
     </div>
     <div class="controls-pane">
       <h2>Controls</h2>
-      <button id="add-node">Add Entity</button>
-      <button id="add-branch">Add Branch</button>
-      <button id="connect-nodes">Connect Nodes</button>
+      <div class="action-buttons">
+        <button id="add-node">Add Entity</button>
+        <button id="add-branch">Add Branch</button>
+        <button id="connect-nodes">Connect Nodes</button>
+        <button id="delete-node">Delete Selected</button>
+      </div>
       <div style="margin-top:10px;">
         <input id="jurisdiction-input" list="jurisdictions" placeholder="Select jurisdiction" />
         <datalist id="jurisdictions"></datalist>
@@ -48,14 +52,15 @@
         <input id="ownership-input" placeholder="Ownership %" />
         <button id="change-ownership">Set Ownership</button>
       </div>
+      <div class="history-controls" style="margin-top:10px;">
+        <button id="undo-action">Undo</button>
+        <button id="redo-action">Redo</button>
+      </div>
       <div class="io-controls" style="margin-top:10px;">
         <button id="export-csv">Export CSV</button>
         <button id="export-png">Export PNG</button>
         <button id="export-svg">Export SVG</button>
       </div>
-      <button id="undo-action">Undo</button>
-      <button id="redo-action">Redo</button>
-      <button id="delete-node">Delete Selected</button>
       <button id="reset-chart">Reset Chart</button>
       <div style="margin-top:10px;">
         <button id="zoom-in">Zoom In</button>
