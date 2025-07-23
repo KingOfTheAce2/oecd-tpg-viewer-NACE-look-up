@@ -360,6 +360,7 @@ function updateTreeView() {
     const pre = document.getElementById('tree-output-display');
     pre.textContent = generateTreeOutput(root);
     if (window.twemoji) twemoji.parse(pre);
+    updateCsvText();
 }
 
 // --- INITIALIZATION ---
@@ -614,29 +615,34 @@ function redrawLines() {
     });
 }
 
-// --- NEW: Function to export the visual chart to CSV ---
-function exportToCsv() {
+// --- NEW: Functions to keep CSV text in sync and to export ---
+function generateCsvText() {
     const headers = "id,parent_id,name,ownership%,jurisdiction";
     let csvContent = [headers];
 
-    // The buildHierarchy function already gives us a flat list with parent_id
-    // We can just iterate through our 'chartNodes' map
     chartNodes.forEach(node => {
         const row = [
             node.id,
             node.parent_id || '0',
-            `"${node.name}"`, // Quote names to handle commas
+            `\"${node.name}\"`,
             node.ownership || '',
             node.jurisdiction || ''
         ].join(',');
         csvContent.push(row);
     });
+    return csvContent.join('\n');
+}
 
-    // Update the textarea and provide a download link
-    const csvText = csvContent.join('\n');
+function updateCsvText() {
+    const csvText = generateCsvText();
+    const area = document.getElementById('csvtext');
+    if (area) area.value = csvText;
+}
+
+function exportToCsv() {
+    const csvText = generateCsvText();
     document.getElementById('csvtext').value = csvText;
-    
-    // Trigger download
+
     const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -667,6 +673,39 @@ function importJson(evt) {
     };
     reader.readAsText(file);
     evt.target.value = '';
+}
+
+function saveVersion() {
+    const nameInput = document.getElementById('version-name');
+    if (!nameInput) return;
+    const name = nameInput.value.trim();
+    if (!name) return;
+    const data = JSON.stringify(Array.from(chartNodes.values()));
+    localStorage.setItem('chartpal-version-' + name, data);
+    updateVersionList();
+    nameInput.value = '';
+}
+
+function loadVersion(name) {
+    const data = localStorage.getItem('chartpal-version-' + name);
+    if (!data) return;
+    const records = JSON.parse(data);
+    drawChartFromData(records);
+}
+
+function updateVersionList() {
+    const select = document.getElementById('version-list');
+    if (!select) return;
+    select.innerHTML = '';
+    Object.keys(localStorage).forEach(k => {
+        if (k.startsWith('chartpal-version-')) {
+            const name = k.replace('chartpal-version-','');
+            const opt = document.createElement('option');
+            opt.value = name;
+            opt.textContent = name;
+            select.appendChild(opt);
+        }
+    });
 }
 
 function exportImage(type) {
@@ -866,8 +905,8 @@ function layoutGrid() {
     redrawLines();
 }
 
-function zoomCanvas(delta) {
-    canvasScale = Math.max(0.2, Math.min(3, canvasScale + delta));
+function setZoom(percent) {
+    canvasScale = Math.max(20, Math.min(300, percent)) / 100;
     document.getElementById('canvas').style.transform = `scale(${canvasScale})`;
     chartLines.forEach(line => {
         line.position();
@@ -875,8 +914,13 @@ function zoomCanvas(delta) {
             line.middleLabel.style.transform = `scale(${1 / canvasScale})`;
         }
     });
-    const disp = document.getElementById('zoom-display');
-    if (disp) disp.textContent = Math.round(canvasScale * 100) + '%';
+    const input = document.getElementById('zoom-input');
+    if (input) input.value = Math.round(canvasScale * 100);
+    redrawLines();
+}
+
+function zoomCanvas(delta) {
+    setZoom(canvasScale * 100 + delta * 100);
 }
 
 function initCanvasPan() {
@@ -934,6 +978,19 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('change-ownership').addEventListener('click', handleChangeOwnership);
     document.getElementById('zoom-in').addEventListener('click', () => zoomCanvas(0.1));
     document.getElementById('zoom-out').addEventListener('click', () => zoomCanvas(-0.1));
+    const zoomInput = document.getElementById('zoom-input');
+    if (zoomInput) {
+        zoomInput.addEventListener('change', () => {
+            const val = parseFloat(zoomInput.value);
+            if (!isNaN(val)) setZoom(val);
+        });
+    }
+    document.getElementById('save-version').addEventListener('click', saveVersion);
+    document.getElementById('load-version-btn').addEventListener('click', () => {
+        const sel = document.getElementById('version-list');
+        if (sel && sel.value) loadVersion(sel.value);
+    });
+    updateVersionList();
     document.getElementById('layout-grid').addEventListener('click', layoutGrid);
     initCanvasPan();
 
