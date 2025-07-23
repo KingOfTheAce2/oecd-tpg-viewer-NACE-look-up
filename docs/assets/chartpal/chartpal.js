@@ -2,6 +2,99 @@
 let countryNames = {};
 let currentCsvText = '';
 let currentZoom = 100; // Zoom level in percent
+// --- History & Selection ---
+let undoStack = [];
+let redoStack = [];
+let selectedNodeIds = new Set();
+
+function pushHistory(action) {
+    undoStack.push(action);
+    redoStack = [];
+    saveChartLocal();
+}
+
+function undo() {
+    const action = undoStack.pop();
+    if (!action) return;
+    redoStack.push(action);
+    applyHistory(action, true);
+    saveChartLocal();
+}
+
+function redo() {
+    const action = redoStack.pop();
+    if (!action) return;
+    undoStack.push(action);
+    applyHistory(action, false);
+    saveChartLocal();
+}
+
+function applyHistory(action, isUndo) {
+    switch (action.type) {
+        case 'add':
+            if (isUndo) {
+                removeNodeById(action.node.id);
+            } else {
+                renderNode({...action.node}, action.node.x, action.node.y);
+            }
+            break;
+        case 'delete':
+            if (isUndo) {
+                action.nodes.forEach(n => renderNode({...n}, n.x, n.y));
+            } else {
+                action.nodes.forEach(n => removeNodeById(n.id));
+            }
+            break;
+        case 'move':
+            action.moves.forEach(m => {
+                const el = document.getElementById(`node-${safeId(m.id)}`);
+                if (el) {
+                    const node = chartNodes.get(m.id);
+                    const x = isUndo ? m.fromX : m.toX;
+                    const y = isUndo ? m.fromY : m.toY;
+                    el.style.left = x + 'px';
+                    el.style.top = y + 'px';
+                    node.x = x;
+                    node.y = y;
+                }
+            });
+            redrawLines();
+            break;
+        case 'connect':
+            const node = chartNodes.get(action.childId);
+            if (node) {
+                node.parent_id = isUndo ? action.oldParent : action.newParent;
+                redrawLines();
+                updateTreeView();
+            }
+            break;
+    }
+}
+
+function saveChartLocal() {
+    const data = JSON.stringify(Array.from(chartNodes.values()));
+    localStorage.setItem('chartpal-data', data);
+}
+
+function loadChartLocal() {
+    const data = localStorage.getItem('chartpal-data');
+    if (data) {
+        const records = JSON.parse(data);
+        drawChartFromData(records);
+    }
+}
+
+function resetChart() {
+    chartNodes.clear();
+    const canvas = document.getElementById('canvas');
+    canvas.innerHTML = '';
+    chartLines.forEach(l => l.remove());
+    chartLines = [];
+    undoStack = [];
+    redoStack = [];
+    localStorage.removeItem('chartpal-data');
+    updateTreeView();
+}
 
 // --- DATA & PARSING ---
 
@@ -68,7 +161,9 @@ function buildHierarchy(records) {
                 rec.ownership = parseFloat(val);
              }
         }
-        nodes.set(rec.id, { ...rec, children: [] });
+        const x = rec.x !== undefined ? parseFloat(rec.x) : undefined;
+        const y = rec.y !== undefined ? parseFloat(rec.y) : undefined;
+        nodes.set(rec.id, { ...rec, x, y, children: [] });
     });
     
     const roots = [];
@@ -297,8 +392,10 @@ function drawChartFromData(records) {
     // 3. Render boxes and store them in our map
     let yPos = 30; // Initial vertical position
     nodesData.children.forEach(nodeData => {
-        renderNode(nodeData, 30, yPos);
-        yPos += 150; // Stagger initial root nodes
+        const x = typeof nodeData.x === 'number' ? nodeData.x : 30;
+        const y = typeof nodeData.y === 'number' ? nodeData.y : yPos;
+        renderNode(nodeData, x, y);
+        yPos = y + 150; // Stagger next root
     });
     
     // 4. Draw connecting lines
@@ -346,6 +443,8 @@ function renderNode(nodeData, x, y) {
     nodeEl.dataset.id = nodeData.id;
     nodeEl.style.left = `${x}px`;
     nodeEl.style.top = `${y}px`;
+    nodeData.x = x;
+    nodeData.y = y;
 
     // Populate the box content
     if (nodeData.isBranch) {
@@ -367,7 +466,7 @@ function renderNode(nodeData, x, y) {
     // Make the node draggable (simple implementation)
     makeDraggable(nodeEl);
 
-    nodeEl.addEventListener('click', () => {
+    nodeEl.addEventListener('click', (e) => {
         if (connectMode) {
             if (!connectParentId) {
                 connectParentId = nodeData.id;
@@ -375,18 +474,29 @@ function renderNode(nodeData, x, y) {
             } else {
                 if (connectParentId !== nodeData.id) {
                     const childData = chartNodes.get(nodeData.id);
+                    const old = childData.parent_id || null;
                     childData.parent_id = connectParentId;
                     redrawLines();
                     updateTreeView();
+                    pushHistory({type:'connect', childId: nodeData.id, oldParent: old, newParent: connectParentId});
                 }
                 document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
                 connectParentId = null;
                 connectMode = false;
             }
         } else {
-            document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
+            if (!e.shiftKey && !e.ctrlKey) {
+                document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
+                selectedNodeIds.clear();
+            }
+            if (selectedNodeIds.has(nodeData.id)) {
+                selectedNodeIds.delete(nodeData.id);
+                nodeEl.classList.remove('selected');
+            } else {
+                selectedNodeIds.add(nodeData.id);
+                nodeEl.classList.add('selected');
+            }
             selectedNodeId = nodeData.id;
-            nodeEl.classList.add('selected');
         }
     });
     
@@ -395,8 +505,10 @@ function renderNode(nodeData, x, y) {
     let childX = x + 50;
     if (nodeData.children) {
         nodeData.children.forEach(child => {
-            renderNode(child, childX, childY);
-            childY += 150; // Adjust spacing as needed
+            const cx = typeof child.x === 'number' ? child.x : childX;
+            const cy = typeof child.y === 'number' ? child.y : childY;
+            renderNode(child, cx, cy);
+            childY = cy + 150; // Adjust spacing as needed
         });
     }
 }
@@ -404,6 +516,7 @@ function renderNode(nodeData, x, y) {
 // --- Utility to make an element draggable ---
 function makeDraggable(element) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+    let startPositions = new Map();
     element.onmousedown = dragMouseDown;
 
     function dragMouseDown(e) {
@@ -412,6 +525,12 @@ function makeDraggable(element) {
         pos4 = e.clientY;
         document.onmouseup = closeDragElement;
         document.onmousemove = elementDrag;
+        const ids = selectedNodeIds.size && selectedNodeIds.has(element.dataset.id) ? selectedNodeIds : new Set([element.dataset.id]);
+        startPositions.clear();
+        ids.forEach(id => {
+            const el = document.getElementById(`node-${safeId(id)}`);
+            startPositions.set(id, {x: el.offsetLeft, y: el.offsetTop});
+        });
     }
 
     function elementDrag(e) {
@@ -420,16 +539,48 @@ function makeDraggable(element) {
         pos2 = pos4 - e.clientY;
         pos3 = e.clientX;
         pos4 = e.clientY;
-        element.style.top = (element.offsetTop - pos2) + "px";
-        element.style.left = (element.offsetLeft - pos1) + "px";
-        // Update all connecting lines
+        const ids = selectedNodeIds.size && selectedNodeIds.has(element.dataset.id) ? selectedNodeIds : new Set([element.dataset.id]);
+        ids.forEach(id => {
+            const el = document.getElementById(`node-${safeId(id)}`);
+            el.style.top = (el.offsetTop - pos2) + "px";
+            el.style.left = (el.offsetLeft - pos1) + "px";
+            const node = chartNodes.get(id);
+            node.x = el.offsetLeft;
+            node.y = el.offsetTop;
+        });
         chartLines.forEach(line => line.position());
     }
 
     function closeDragElement() {
         document.onmouseup = null;
         document.onmousemove = null;
+        const ids = selectedNodeIds.size && selectedNodeIds.has(element.dataset.id) ? selectedNodeIds : new Set([element.dataset.id]);
+        const moves = [];
+        ids.forEach(id => {
+            const start = startPositions.get(id);
+            const el = document.getElementById(`node-${safeId(id)}`);
+            moves.push({id, fromX:start.x, fromY:start.y, toX:el.offsetLeft, toY:el.offsetTop});
+        });
+        if (moves.length) pushHistory({type:'move', moves});
     }
+}
+
+function removeNodeById(id) {
+    const el = document.getElementById(`node-${safeId(id)}`);
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+    chartNodes.delete(id);
+    chartLines = chartLines.filter(line => {
+        if (line.start && line.end) {
+            const sid = line.start.id.replace('node-','');
+            const eid = line.end.id.replace('node-','');
+            if (sid === safeId(id) || eid === safeId(id)) {
+                line.remove();
+                return false;
+            }
+        }
+        return true;
+    });
+    redrawLines();
 }
 
 function redrawLines() {
@@ -495,6 +646,76 @@ function exportToCsv() {
     URL.revokeObjectURL(url);
 }
 
+function exportJson() {
+    const data = JSON.stringify(Array.from(chartNodes.values()), null, 2);
+    const blob = new Blob([data], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'chart.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importJson(evt) {
+    const file = evt.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+        const records = JSON.parse(reader.result);
+        drawChartFromData(records);
+    };
+    reader.readAsText(file);
+    evt.target.value = '';
+}
+
+function exportImage(type) {
+    const node = document.getElementById('canvas');
+    html2canvas(node).then(canvas => {
+        if (type === 'png') {
+            const data = canvas.toDataURL('image/png');
+            const a = document.createElement('a');
+            a.href = data;
+            a.download = 'chart.png';
+            a.click();
+        } else {
+            const png = canvas.toDataURL('image/png');
+            const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${canvas.width}" height="${canvas.height}"><image href="${png}" width="${canvas.width}" height="${canvas.height}"/></svg>`;
+            const blob = new Blob([svg], {type:'image/svg+xml'});
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'chart.svg';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    });
+}
+
+function handleDeleteSelected() {
+    if (selectedNodeIds.size === 0) return;
+    const nodes = [];
+    selectedNodeIds.forEach(id => {
+        const node = chartNodes.get(id);
+        if (node) nodes.push({...node});
+        removeNodeById(id);
+    });
+    pushHistory({type:'delete', nodes});
+    selectedNodeIds.clear();
+    updateTreeView();
+}
+
+function handleShortcuts(e) {
+    if (e.ctrlKey && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); return; }
+    if ((e.ctrlKey && e.key.toLowerCase() === 'y') || (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'z')) { e.preventDefault(); redo(); return; }
+    if (e.key === 'Delete') { e.preventDefault(); handleDeleteSelected(); return; }
+    if (e.key.toLowerCase() === 'n') { e.preventDefault(); handleAddNode(); return; }
+    if (e.key.toLowerCase() === 'b') { e.preventDefault(); handleAddBranch(); return; }
+    if (e.key.toLowerCase() === 'c') { e.preventDefault(); toggleConnectMode(); return; }
+    if (e.key === '+') { e.preventDefault(); zoomCanvas(0.1); return; }
+    if (e.key === '-') { e.preventDefault(); zoomCanvas(-0.1); return; }
+}
+
 // --- REVISED: Event handler to import from CSV text area ---
 async function handleImport() {
     let text = document.getElementById('csvtext').value.trim();
@@ -531,6 +752,7 @@ function handleAddNode() {
         children: []
     };
     renderNode(newNodeData, 50, 50); // Add at a default position
+    pushHistory({type:'add', node:{...newNodeData, x:50, y:50}});
 
     // Also update the tree view
     updateTreeView();
@@ -547,6 +769,7 @@ function handleAddBranch() {
         children: []
     };
     renderNode(newNodeData, 50, 50);
+    pushHistory({type:'add', node:{...newNodeData, x:50, y:50}});
     updateTreeView();
     redrawLines();
 }
@@ -691,6 +914,17 @@ document.addEventListener('DOMContentLoaded', () => {
     // NEW event listeners
     document.getElementById('import-from-csv').addEventListener('click', handleImport);
     document.getElementById('export-csv').addEventListener('click', exportToCsv);
+    document.getElementById('export-png').addEventListener('click', () => exportImage('png'));
+    document.getElementById('export-svg').addEventListener('click', () => exportImage('svg'));
+    document.getElementById('save-json').addEventListener('click', exportJson);
+    document.getElementById('load-json').addEventListener('click', () => {
+        document.getElementById('jsonfile').click();
+    });
+    document.getElementById('jsonfile').addEventListener('change', importJson);
+    document.getElementById('undo-action').addEventListener('click', undo);
+    document.getElementById('redo-action').addEventListener('click', redo);
+    document.getElementById('delete-node').addEventListener('click', handleDeleteSelected);
+    document.getElementById('reset-chart').addEventListener('click', resetChart);
     document.getElementById('add-node').addEventListener('click', handleAddNode);
     const branchBtn = document.getElementById('add-branch');
     if (branchBtn) branchBtn.addEventListener('click', handleAddBranch);
@@ -702,6 +936,10 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('zoom-out').addEventListener('click', () => zoomCanvas(-0.1));
     document.getElementById('layout-grid').addEventListener('click', layoutGrid);
     initCanvasPan();
+
+    document.addEventListener('keydown', handleShortcuts);
+
+    loadChartLocal();
 
     if (window.twemoji) twemoji.parse(document.body);
 
