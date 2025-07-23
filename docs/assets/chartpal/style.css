@@ -6,6 +6,7 @@
 }
 .editor-pane {
     flex-grow: 1;
+    min-width: 400px;
     border: 1px solid #ccc;
 }
 .editor-canvas {
@@ -17,7 +18,7 @@
     transform-origin: top left;
 }
 .controls-pane {
-    width: 350px;
+    width: 300px;
     border: 1px solid #ccc;
     padding: 10px;
     overflow-y: auto;
@@ -71,6 +72,14 @@
 }
 .chart-node.selected {
     border-color: #007bff;
+}
+
+.branch-node {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    line-height: 36px;
+    padding: 0;
 }
 
 .legend {
