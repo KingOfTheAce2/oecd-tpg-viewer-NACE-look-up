@@ -805,6 +805,7 @@ function handleAddBranch() {
         parent_id: '0',
         name: `Branch ${newId}`,
         isBranch: true,
+        ownership: 100,
         children: []
     };
     renderNode(newNodeData, 50, 50);
@@ -890,16 +891,16 @@ function layoutGrid() {
             el.style.left = `${x}px`;
             el.style.top = `${y}px`;
         }
-        let childY = y + 150;
+        let childY = y + 200;
         node.children.forEach(child => {
             positionNode(child, x + 200, childY);
-            childY += 150;
+            childY += 200;
         });
     }
 
     hierarchy.children.forEach(node => {
         positionNode(node, 30, startY);
-        startY += 150;
+        startY += 200;
     });
 
     redrawLines();
@@ -960,11 +961,6 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('export-csv').addEventListener('click', exportToCsv);
     document.getElementById('export-png').addEventListener('click', () => exportImage('png'));
     document.getElementById('export-svg').addEventListener('click', () => exportImage('svg'));
-    document.getElementById('save-json').addEventListener('click', exportJson);
-    document.getElementById('load-json').addEventListener('click', () => {
-        document.getElementById('jsonfile').click();
-    });
-    document.getElementById('jsonfile').addEventListener('change', importJson);
     document.getElementById('undo-action').addEventListener('click', undo);
     document.getElementById('redo-action').addEventListener('click', redo);
     document.getElementById('delete-node').addEventListener('click', handleDeleteSelected);
