@@ -22,6 +22,9 @@ async function loadCountryNames(url = 'assets/chartpal/country_names.json') {
         if (document.getElementById('jurisdiction-list')) {
             populateJurisdictionReference();
         }
+        if (document.getElementById('jurisdictions')) {
+            populateJurisdictionDatalist();
+        }
     } catch (e) {
         console.error('Failed to load country names:', e);
         showError('Could not load country reference list.');
@@ -222,6 +225,29 @@ function filterJurisdictionList() {
     });
 }
 
+function populateJurisdictionDatalist() {
+    const datalist = document.getElementById('jurisdictions');
+    if (!datalist) return;
+    datalist.innerHTML = '';
+    Object.entries(countryNames).forEach(([code, name]) => {
+        const opt = document.createElement('option');
+        opt.value = name;
+        opt.dataset.code = code;
+        datalist.appendChild(opt);
+    });
+}
+
+function getJurisdictionName(code) {
+    if (!code) return 'N/A';
+    return countryNames[code.toUpperCase()] || code;
+}
+
+function updateTreeView() {
+    const allRecords = Array.from(chartNodes.values());
+    const root = buildHierarchy(allRecords);
+    document.getElementById('tree-output-display').textContent = generateTreeOutput(root);
+}
+
 // --- INITIALIZATION ---
 
 
@@ -257,8 +283,11 @@ function drawChartFromData(records) {
         if (node.parent_id && chartNodes.has(node.parent_id)) {
             const parentEl = document.getElementById(`node-${node.parent_id}`);
             const childEl = document.getElementById(`node-${node.id}`);
-            
+
             const line = new LeaderLine(parentEl, childEl, {
+                color: '#007bff',
+                size: 2,
+                path: 'grid',
                 middleLabel: LeaderLine.pathLabel(`${node.ownership || 100}%`)
             });
             chartLines.push(line);
@@ -281,10 +310,11 @@ function renderNode(nodeData, x, y) {
 
     // Populate the box content
     const flag = nodeData.jurisdiction ? countryFlagEmoji(nodeData.jurisdiction) : '';
+    const jurName = getJurisdictionName(nodeData.jurisdiction);
     nodeEl.innerHTML = `
         <span class="flag">${flag}</span>
         <div class="company-name">${nodeData.name || 'Unnamed'}</div>
-        <div class="jurisdiction">${nodeData.jurisdiction || 'N/A'}</div>
+        <div class="jurisdiction">${jurName}</div>
     `;
 
     canvas.appendChild(nodeEl);
@@ -303,6 +333,7 @@ function renderNode(nodeData, x, y) {
                     const childData = chartNodes.get(nodeData.id);
                     childData.parent_id = connectParentId;
                     redrawLines();
+                    updateTreeView();
                 }
                 document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
                 connectParentId = null;
@@ -365,6 +396,9 @@ function redrawLines() {
             const parentEl = document.getElementById(`node-${node.parent_id}`);
             const childEl = document.getElementById(`node-${node.id}`);
             const line = new LeaderLine(parentEl, childEl, {
+                color: '#007bff',
+                size: 2,
+                path: 'grid',
                 middleLabel: LeaderLine.pathLabel(`${node.ownership || 100}%`)
             });
             chartLines.push(line);
@@ -441,23 +475,33 @@ function handleAddNode() {
     renderNode(newNodeData, 50, 50); // Add at a default position
 
     // Also update the tree view
-    const allRecords = Array.from(chartNodes.values());
-    const root = buildHierarchy(allRecords);
-    document.getElementById('tree-output-display').textContent = generateTreeOutput(root);
+    updateTreeView();
     redrawLines();
 }
 
 function handleChangeJurisdiction() {
     if (!selectedNodeId) return;
-    const code = prompt('Enter jurisdiction code (e.g. US):');
-    if (!code) return;
+    const input = document.getElementById('jurisdiction-input');
+    if (!input) return;
+    const value = input.value.trim();
+    if (!value) return;
+    let code = value.toUpperCase();
+    if (!countryNames[code]) {
+        code = Object.keys(countryNames).find(c => countryNames[c].toLowerCase() === value.toLowerCase());
+    }
+    if (!code) {
+        showError('Unknown jurisdiction');
+        return;
+    }
     const node = chartNodes.get(selectedNodeId);
-    node.jurisdiction = code.toUpperCase();
+    node.jurisdiction = code;
     const el = document.getElementById(`node-${selectedNodeId}`);
     if (el) {
-        el.querySelector('.flag').textContent = countryFlagEmoji(node.jurisdiction);
-        el.querySelector('.jurisdiction').textContent = node.jurisdiction;
+        el.querySelector('.flag').textContent = countryFlagEmoji(code);
+        el.querySelector('.jurisdiction').textContent = getJurisdictionName(code);
     }
+    input.value = '';
+    updateTreeView();
 }
 
 function toggleConnectMode() {
@@ -469,6 +513,9 @@ function toggleConnectMode() {
 function zoomCanvas(delta) {
     canvasScale = Math.max(0.2, Math.min(3, canvasScale + delta));
     document.getElementById('canvas').style.transform = `scale(${canvasScale})`;
+    chartLines.forEach(line => line.position());
+    const disp = document.getElementById('zoom-display');
+    if (disp) disp.textContent = Math.round(canvasScale * 100) + '%';
 }
 
 function initCanvasPan() {

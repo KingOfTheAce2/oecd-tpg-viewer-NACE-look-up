@@ -24,6 +24,22 @@
 .data-pane {
     margin-top: 20px;
 }
+
+.data-pane textarea {
+    display: block;
+    margin: 0 auto;
+    width: 90%;
+}
+
+.data-pane button {
+    display: block;
+    margin: 10px auto;
+}
+
+.data-pane input[type="file"] {
+    display: block;
+    margin: 0 auto 10px;
+}
 /* Style for the draggable boxes */
 .chart-node {
     position: absolute;
