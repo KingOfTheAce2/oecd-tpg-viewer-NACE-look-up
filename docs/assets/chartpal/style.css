@@ -13,6 +13,7 @@
     width: 100%;
     height: 100%;
     overflow: auto;
+    cursor: grab;
 }
 .controls-pane {
     width: 350px;
@@ -28,7 +29,23 @@
     position: absolute;
     border: 2px solid black;
     background-color: white;
-    padding: 5px;
+    padding: 10px;
     cursor: grab;
     min-width: 150px;
+    text-align: center;
+}
+.chart-node .flag {
+    position: absolute;
+    top: 2px;
+    right: 4px;
+}
+.chart-node .company-name {
+    margin-top: 10px;
+    font-weight: bold;
+}
+.chart-node .jurisdiction {
+    font-size: 0.8em;
+}
+.chart-node.selected {
+    border-color: #007bff;
 }

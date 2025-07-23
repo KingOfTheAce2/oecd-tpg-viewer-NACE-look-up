@@ -22,7 +22,13 @@
     <div class="controls-pane">
       <h2>Controls</h2>
       <button id="add-node">Add Company Box</button>
+      <button id="connect-nodes">Connect Boxes</button>
+      <button id="change-jurisdiction">Change Jurisdiction</button>
       <button id="export-csv">Export to CSV</button>
+      <div style="margin-top:10px;">
+        <button id="zoom-in">Zoom In</button>
+        <button id="zoom-out">Zoom Out</button>
+      </div>
       <hr>
       <h2>Tree View</h2>
       <pre id="tree-output-display"></pre>
@@ -31,8 +37,9 @@
 
   <div class="data-pane">
     <h2>CSV Data</h2>
-    <p>You can paste CSV data here and click 'Import' to draw the chart, or edit the chart visually and click 'Export to CSV'.</p>
-    <textarea id="csvtext" rows="10" placeholder="id,parent_id,name,ownership%,jurisdiction..."></textarea>
+    <p>You can upload a CSV file or edit the text below then click 'Import'.</p>
+    <input type="file" id="csvfile" accept=".csv" />
+    <textarea id="csvtext" rows="10" placeholder="id,parent_id,name,ownership%,jurisdiction">id,parent_id,name,ownership%,jurisdiction\n</textarea>
     <button id="import-from-csv">Import from CSV</button>
     <div id="error-box" class="error"></div>
   </div>
