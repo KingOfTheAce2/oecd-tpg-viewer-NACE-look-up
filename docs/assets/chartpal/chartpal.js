@@ -39,9 +39,22 @@ function parseCsvText(text) {
         throw new Error(`CSV Error: ${result.errors[0].message} on row ${result.errors[0].row}.`);
     }
     return result.data.map(r => {
+        // normalise keys to lower case for robustness
+        const rec = {};
+        Object.entries(r).forEach(([k,v]) => rec[k.trim().toLowerCase()] = v);
+
         // Ensure parent_id=0 for root nodes if missing
-        if (!r.parent_id) r.parent_id = '0';
-        return r;
+        if (!rec.parent_id) rec.parent_id = '0';
+
+        // support both ownership% and ownership columns
+        let ownVal = rec['ownership%'] || rec['ownership'] || '';
+        if (ownVal !== '') {
+            ownVal = String(ownVal).trim().replace('%','');
+            if (!isNaN(ownVal)) rec.ownership = parseFloat(ownVal);
+        }
+
+        rec.id = rec.id || '';
+        return rec;
     });
 }
 
@@ -249,7 +262,9 @@ function getJurisdictionName(code) {
 function updateTreeView() {
     const allRecords = Array.from(chartNodes.values());
     const root = buildHierarchy(allRecords);
-    document.getElementById('tree-output-display').textContent = generateTreeOutput(root);
+    const pre = document.getElementById('tree-output-display');
+    pre.textContent = generateTreeOutput(root);
+    if (window.twemoji) twemoji.parse(pre);
 }
 
 // --- INITIALIZATION ---
@@ -262,6 +277,10 @@ let selectedNodeId = null; // Currently selected node
 let connectMode = false;
 let connectParentId = null;
 let canvasScale = 1;
+
+function safeId(id) {
+    return String(id).replace(/[^a-zA-Z0-9_-]/g, '_');
+}
 
 // --- Main function to draw the chart from data ---
 function drawChartFromData(records) {
@@ -285,8 +304,8 @@ function drawChartFromData(records) {
     // 4. Draw connecting lines
     chartNodes.forEach(node => {
         if (node.parent_id && chartNodes.has(node.parent_id)) {
-        const parentEl = document.getElementById(`node-${node.parent_id}`);
-        const childEl = document.getElementById(`node-${node.id}`);
+        const parentEl = document.getElementById(`node-${safeId(node.parent_id)}`);
+        const childEl = document.getElementById(`node-${safeId(node.id)}`);
 
         const label = LeaderLine.pathLabel(`${node.ownership || 100}%`);
         label.style.fontSize = '14px';
@@ -310,14 +329,16 @@ function drawChartFromData(records) {
     });
     
     // 5. Update the side tree view
-    document.getElementById('tree-output-display').textContent = generateTreeOutput(nodesData);
+    const pre = document.getElementById('tree-output-display');
+    pre.textContent = generateTreeOutput(nodesData);
+    if (window.twemoji) twemoji.parse(pre);
 }
 
 // --- Renders a single node box on the canvas ---
 function renderNode(nodeData, x, y) {
     const canvas = document.getElementById('canvas');
     const nodeEl = document.createElement('div');
-    nodeEl.id = `node-${nodeData.id}`;
+    nodeEl.id = `node-${safeId(nodeData.id)}`;
     nodeEl.className = 'chart-node';
     nodeEl.dataset.id = nodeData.id;
     nodeEl.style.left = `${x}px`;
@@ -409,8 +430,8 @@ function redrawLines() {
     chartLines = [];
     chartNodes.forEach(node => {
         if (node.parent_id && chartNodes.has(node.parent_id)) {
-            const parentEl = document.getElementById(`node-${node.parent_id}`);
-            const childEl = document.getElementById(`node-${node.id}`);
+        const parentEl = document.getElementById(`node-${safeId(node.parent_id)}`);
+        const childEl = document.getElementById(`node-${safeId(node.id)}`);
             const label = LeaderLine.pathLabel(`${node.ownership || 100}%`);
             label.style.fontSize = '14px';
             const options = {
@@ -480,6 +501,7 @@ async function handleImport() {
     }
     try {
         const records = parseCsvText(text);
+        currentCsvText = text;
         drawChartFromData(records); // NEW: This now draws the visual chart
         showError(''); // Clear errors
     } catch (err) {
@@ -522,7 +544,7 @@ function handleChangeJurisdiction() {
     }
     const node = chartNodes.get(selectedNodeId);
     node.jurisdiction = code;
-    const el = document.getElementById(`node-${selectedNodeId}`);
+    const el = document.getElementById(`node-${safeId(selectedNodeId)}`);
     if (el) {
         el.querySelector('.flag').textContent = countryFlagEmoji(code);
         el.querySelector('.jurisdiction').textContent = getJurisdictionName(code);
@@ -540,11 +562,29 @@ function handleChangeName() {
     if (!value) return;
     const node = chartNodes.get(selectedNodeId);
     node.name = value;
-    const el = document.getElementById(`node-${selectedNodeId}`);
+    const el = document.getElementById(`node-${safeId(selectedNodeId)}`);
     if (el) {
         el.querySelector('.company-name').textContent = value;
     }
     input.value = '';
+    updateTreeView();
+}
+
+function handleChangeOwnership() {
+    if (!selectedNodeId) return;
+    const input = document.getElementById('ownership-input');
+    if (!input) return;
+    const value = input.value.trim();
+    if (value === '') return;
+    const percent = parseFloat(value);
+    if (isNaN(percent) || percent < 0 || percent > 100) {
+        showError('Ownership must be between 0 and 100');
+        return;
+    }
+    const node = chartNodes.get(selectedNodeId);
+    node.ownership = percent;
+    input.value = '';
+    redrawLines();
     updateTreeView();
 }
 
@@ -606,6 +646,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('connect-nodes').addEventListener('click', toggleConnectMode);
     document.getElementById('change-jurisdiction').addEventListener('click', handleChangeJurisdiction);
     document.getElementById('change-name').addEventListener('click', handleChangeName);
+    document.getElementById('change-ownership').addEventListener('click', handleChangeOwnership);
     document.getElementById('zoom-in').addEventListener('click', () => zoomCanvas(0.1));
     document.getElementById('zoom-out').addEventListener('click', () => zoomCanvas(-0.1));
     initCanvasPan();
