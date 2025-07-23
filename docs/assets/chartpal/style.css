@@ -22,6 +22,12 @@
     padding: 10px;
     overflow-y: auto;
 }
+.tree-pane {
+    width: 250px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    overflow-y: auto;
+}
 .data-pane {
     margin-top: 20px;
 }
