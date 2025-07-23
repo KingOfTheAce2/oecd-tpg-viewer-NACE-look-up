@@ -7,7 +7,7 @@ This repository contains a small static website with several tools:
 3. **NAICS Code Finder** – a similar viewer for the North American Industry Classification System.
 4. **Side‑by‑Side Viewer** – display the NACE and NAICS finders together for easy comparison.
 5. **Sankey Diagram Generator** – create simple Sankey diagrams from CSV/JSON data.
-6. **ChartPal** – A client-side organisational chart builder powered by D3.js.
+6. **ChartPal** – A client-side organisational chart builder written in vanilla JavaScript.
 
 The site is contained entirely in the `docs/` directory and can be used locally or hosted on any static web server.
 
@@ -51,9 +51,10 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
       naics_data.json      # Dataset of NAICS codes
       naics-app.js         # React app for the NAICS finder
     /chartpal
-      app.py               # Simple Flask backend
-      /static
-        chartpal.js        # Browser-based organisational chart builder
+      chartpal.js        # Browser-based organisational chart builder
+      papaparse.min.js   # CSV parsing library
+      country_names.json # Reference for jurisdiction codes
+      style.css          # Styles for ChartPal
 ```
 
 ## Notes

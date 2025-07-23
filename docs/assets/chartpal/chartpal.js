@@ -5,7 +5,7 @@ let currentZoom = 100; // Zoom level in percent
 
 // --- DATA & PARSING ---
 
-async function loadCountryNames(url = 'https://gist.githubusercontent.com/tmrk/e82208753a2205a278fc/raw/b1875e5330a133483983d7350c3752a7d4d76cf2/country_names.json') {
+async function loadCountryNames(url = 'assets/chartpal/country_names.json') {
     try {
         const response = await fetch(url);
         if (!response.ok) throw new Error('Could not load country names');
