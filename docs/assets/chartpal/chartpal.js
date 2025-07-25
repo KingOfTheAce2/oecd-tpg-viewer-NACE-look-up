@@ -87,7 +87,7 @@ function loadChartLocal() {
 
 function resetChart() {
     chartNodes.clear();
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('chart');
     canvas.innerHTML = '';
     chartLines.forEach(l => l.remove());
     chartLines = [];
@@ -133,7 +133,8 @@ function readXlsxFile(file) {
                 const data = new Uint8Array(e.target.result);
                 const wb = XLSX.read(data, {type: 'array'});
                 const sheet = wb.Sheets[wb.SheetNames[0]];
-                const csv = XLSX.utils.sheet_to_csv(sheet);
+                const json = XLSX.utils.sheet_to_json(sheet, {defval: ''});
+                const csv = Papa.unparse(json);
                 resolve(csv);
             } catch (err) { reject(err); }
         };
@@ -399,7 +400,7 @@ function safeId(id) {
 // --- Main function to draw the chart from data ---
 function drawChartFromData(records) {
     // 1. Clear existing canvas
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('chart');
     canvas.innerHTML = '';
     chartLines.forEach(line => line.remove());
     chartLines = [];
@@ -409,12 +410,12 @@ function drawChartFromData(records) {
     const nodesData = buildHierarchy(records);
     
     // 3. Render boxes and store them in our map
-    let yPos = 30; // Initial vertical position
+    let xPos = 30; // Initial horizontal position
     nodesData.children.forEach(nodeData => {
-        const x = typeof nodeData.x === 'number' ? nodeData.x : 30;
-        const y = typeof nodeData.y === 'number' ? nodeData.y : yPos;
+        const x = typeof nodeData.x === 'number' ? nodeData.x : xPos;
+        const y = typeof nodeData.y === 'number' ? nodeData.y : 30;
         renderNode(nodeData, x, y);
-        yPos = y + 150; // Stagger next root
+        xPos = x + 200; // Stagger next root horizontally
     });
     
     // 4. Draw connecting lines
@@ -429,8 +430,8 @@ function drawChartFromData(records) {
             color: '#007bff',
             size: 2,
             path: 'grid',
-            startSocket: 'bottom',
-            endSocket: 'top',
+            startSocket: 'right',
+            endSocket: 'left',
             middleLabel: label
         };
         if (node.ownership && node.ownership < 100) {
@@ -450,11 +451,12 @@ function drawChartFromData(records) {
     const pre = document.getElementById('tree-output-display');
     pre.textContent = generateTreeOutput(nodesData);
     if (window.twemoji) twemoji.parse(pre);
+    updateCanvasSize();
 }
 
 // --- Renders a single node box on the canvas ---
 function renderNode(nodeData, x, y) {
-    const canvas = document.getElementById('canvas');
+    const canvas = document.getElementById('chart');
     const nodeEl = document.createElement('div');
     nodeEl.id = `node-${safeId(nodeData.id)}`;
     nodeEl.className = 'chart-node';
@@ -519,17 +521,18 @@ function renderNode(nodeData, x, y) {
         }
     });
     
-    // Render children recursively (simple vertical layout)
-    let childY = y + 150;
-    let childX = x + 50;
+    // Render children recursively (horizontal layout)
+    let childY = y + 50;
+    let childX = x + 200;
     if (nodeData.children) {
         nodeData.children.forEach(child => {
             const cx = typeof child.x === 'number' ? child.x : childX;
             const cy = typeof child.y === 'number' ? child.y : childY;
             renderNode(child, cx, cy);
-            childY = cy + 150; // Adjust spacing as needed
+            childY = cy + 150; // Stack vertically
         });
     }
+    updateCanvasSize();
 }
 
 // --- Utility to make an element draggable ---
@@ -568,6 +571,7 @@ function makeDraggable(element) {
             node.y = el.offsetTop;
         });
         chartLines.forEach(line => line.position());
+        updateCanvasSize();
     }
 
     function closeDragElement() {
@@ -600,6 +604,7 @@ function removeNodeById(id) {
         return true;
     });
     redrawLines();
+    updateCanvasSize();
 }
 
 function redrawLines() {
@@ -615,8 +620,8 @@ function redrawLines() {
                 color: '#007bff',
                 size: 2,
                 path: 'grid',
-                startSocket: 'bottom',
-                endSocket: 'top',
+                startSocket: 'right',
+                endSocket: 'left',
                 middleLabel: label
             };
             if (node.ownership && node.ownership < 100) {
@@ -631,6 +636,18 @@ function redrawLines() {
             chartLines.push(line);
         }
     });
+}
+
+function updateCanvasSize() {
+    const canvas = document.getElementById('chart');
+    let maxX = 0;
+    let maxY = 0;
+    chartNodes.forEach(node => {
+        maxX = Math.max(maxX, (node.x || 0) + 200);
+        maxY = Math.max(maxY, (node.y || 0) + 150);
+    });
+    canvas.style.minWidth = (maxX + 50) + 'px';
+    canvas.style.minHeight = (maxY + 50) + 'px';
 }
 
 // --- NEW: Functions to keep CSV text in sync and to export ---
@@ -660,15 +677,26 @@ function updateCsvText() {
 function highlightSearch() {
     const termInput = document.getElementById('node-search');
     const term = termInput ? termInput.value.trim().toLowerCase() : '';
+    let firstMatch = null;
     chartNodes.forEach(node => {
         const el = document.getElementById(`node-${safeId(node.id)}`);
         if (!el) return;
         if (!term || (node.name && node.name.toLowerCase().includes(term)) || String(node.id).toLowerCase().includes(term)) {
             el.classList.add('search-highlight');
+            if (!firstMatch) firstMatch = el;
         } else {
             el.classList.remove('search-highlight');
         }
     });
+    if (firstMatch) {
+        const canvas = document.getElementById('canvas');
+        const rect = firstMatch.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
+        const left = firstMatch.offsetLeft - (canvas.clientWidth / 2 - rect.width / 2);
+        const top = firstMatch.offsetTop - (canvas.clientHeight / 2 - rect.height / 2);
+        canvas.scrollLeft = left;
+        canvas.scrollTop = top;
+    }
 }
 
 function exportToCsv() {
@@ -740,8 +768,13 @@ function updateVersionList() {
     });
 }
 
+function deleteVersion(name) {
+    localStorage.removeItem('chartpal-version-' + name);
+    updateVersionList();
+}
+
 function exportImage(type) {
-    const node = document.getElementById('canvas');
+    const node = document.getElementById('chart');
     html2canvas(node).then(canvas => {
         if (type === 'png') {
             const data = canvas.toDataURL('image/png');
@@ -839,6 +872,7 @@ function handleAddNode() {
     // Also update the tree view
     updateTreeView();
     redrawLines();
+    updateCanvasSize();
 }
 
 function handleAddBranch() {
@@ -926,30 +960,30 @@ function toggleConnectMode() {
 function layoutGrid(spacingX = 200, spacingY = 200) {
     const hierarchy = buildHierarchy(Array.from(chartNodes.values()));
 
-    function calcWidth(node) {
-        if (!node.children.length) { node._w = 1; return 1; }
-        node._w = node.children.map(c => calcWidth(c)).reduce((a,b)=>a+b,0);
-        return node._w;
+    function calcHeight(node) {
+        if (!node.children.length) { node._h = 1; return 1; }
+        node._h = node.children.map(c => calcHeight(c)).reduce((a,b)=>a+b,0);
+        return node._h;
     }
-    hierarchy.children.forEach(calcWidth);
+    hierarchy.children.forEach(calcHeight);
 
     function position(node, x, y) {
         const el = document.getElementById(`node-${safeId(node.id)}`);
         if (el) { el.style.left = `${x}px`; el.style.top = `${y}px`; }
-        let childX = x - (node._w * spacingX - spacingX) / 2;
-        const childY = y + spacingY;
+        let childY = y - (node._h * spacingY - spacingY) / 2;
+        const childX = x + spacingX;
         node.children.forEach(c => {
-            const width = c._w * spacingX;
-            position(c, childX + width / 2, childY);
-            childX += width;
+            const height = c._h * spacingY;
+            position(c, childX, childY + height / 2);
+            childY += height;
         });
     }
 
-    let startX = 30;
-    const startY = 30;
+    let startY = 30;
+    const startX = 30;
     hierarchy.children.forEach(c => {
-        position(c, startX + (c._w * spacingX) / 2, startY);
-        startX += c._w * spacingX + spacingX;
+        position(c, startX, startY + (c._h * spacingY) / 2);
+        startY += c._h * spacingY + spacingY;
     });
 
     redrawLines();
@@ -957,7 +991,7 @@ function layoutGrid(spacingX = 200, spacingY = 200) {
 
 function setZoom(percent) {
     canvasScale = Math.max(20, Math.min(300, percent)) / 100;
-    document.getElementById('canvas').style.transform = `scale(${canvasScale})`;
+    document.getElementById('chart').style.transform = `scale(${canvasScale})`;
     chartLines.forEach(line => {
         line.position();
         if (line.middleLabel && line.middleLabel.nodeType === 1) {
@@ -1008,6 +1042,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // NEW event listeners
     document.getElementById('import-from-csv').addEventListener('click', handleImport);
+    const clearBtn = document.getElementById('clear-import');
+    if (clearBtn) clearBtn.addEventListener('click', () => {
+        const fileInput = document.getElementById('csvfile');
+        if (fileInput) fileInput.value = '';
+        document.getElementById('csvtext').value = '';
+        currentCsvText = '';
+    });
     document.getElementById('export-csv').addEventListener('click', exportToCsv);
     document.getElementById('export-png').addEventListener('click', () => exportImage('png'));
     document.getElementById('export-svg').addEventListener('click', () => exportImage('svg'));
@@ -1035,6 +1076,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('load-version-btn').addEventListener('click', () => {
         const sel = document.getElementById('version-list');
         if (sel && sel.value) loadVersion(sel.value);
+    });
+    const delBtn = document.getElementById('delete-version-btn');
+    if (delBtn) delBtn.addEventListener('click', () => {
+        const sel = document.getElementById('version-list');
+        if (sel && sel.value) deleteVersion(sel.value);
     });
     updateVersionList();
     document.getElementById('layout-grid').addEventListener('click', layoutGrid);
