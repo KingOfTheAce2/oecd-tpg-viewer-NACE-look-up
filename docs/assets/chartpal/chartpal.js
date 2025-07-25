@@ -125,6 +125,23 @@ async function loadCountryNames(url = 'assets/chartpal/country_names.json') {
     }
 }
 
+function readXlsxFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = e => {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const wb = XLSX.read(data, {type: 'array'});
+                const sheet = wb.Sheets[wb.SheetNames[0]];
+                const csv = XLSX.utils.sheet_to_csv(sheet);
+                resolve(csv);
+            } catch (err) { reject(err); }
+        };
+        reader.onerror = reject;
+        reader.readAsArrayBuffer(file);
+    });
+}
+
 function parseCsvText(text) {
     // Use PapaParse for robust CSV parsing
     const result = Papa.parse(text.trim(), { header: true, skipEmptyLines: true });
@@ -640,6 +657,20 @@ function updateCsvText() {
     if (area) area.value = csvText;
 }
 
+function highlightSearch() {
+    const termInput = document.getElementById('node-search');
+    const term = termInput ? termInput.value.trim().toLowerCase() : '';
+    chartNodes.forEach(node => {
+        const el = document.getElementById(`node-${safeId(node.id)}`);
+        if (!el) return;
+        if (!term || (node.name && node.name.toLowerCase().includes(term)) || String(node.id).toLowerCase().includes(term)) {
+            el.classList.add('search-highlight');
+        } else {
+            el.classList.remove('search-highlight');
+        }
+    });
+}
+
 function exportToCsv() {
     const csvText = generateCsvText();
     document.getElementById('csvtext').value = csvText;
@@ -759,12 +790,21 @@ function handleShortcuts(e) {
 }
 
 // --- REVISED: Event handler to import from CSV text area ---
-async function handleImport() {
+async function handleImport(evt) {
     let text = document.getElementById('csvtext').value.trim();
     const fileInput = document.getElementById('csvfile');
-    if (fileInput && fileInput.files.length > 0) {
-        const file = fileInput.files[0];
-        text = await file.text();
+    let file = null;
+    if (evt && evt.file) {
+        file = evt.file;
+    } else if (fileInput && fileInput.files.length > 0) {
+        file = fileInput.files[0];
+    }
+    if (file) {
+        if (/\.xlsx$/i.test(file.name)) {
+            text = await readXlsxFile(file);
+        } else {
+            text = await file.text();
+        }
         document.getElementById('csvtext').value = text;
     }
     if (!text) {
@@ -883,27 +923,33 @@ function toggleConnectMode() {
     document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
 }
 
-function layoutGrid() {
-    // Rebuild hierarchy from current node data
+function layoutGrid(spacingX = 200, spacingY = 200) {
     const hierarchy = buildHierarchy(Array.from(chartNodes.values()));
 
-    let startY = 30;
-    function positionNode(node, x, y) {
+    function calcWidth(node) {
+        if (!node.children.length) { node._w = 1; return 1; }
+        node._w = node.children.map(c => calcWidth(c)).reduce((a,b)=>a+b,0);
+        return node._w;
+    }
+    hierarchy.children.forEach(calcWidth);
+
+    function position(node, x, y) {
         const el = document.getElementById(`node-${safeId(node.id)}`);
-        if (el) {
-            el.style.left = `${x}px`;
-            el.style.top = `${y}px`;
-        }
-        let childY = y + 200;
-        node.children.forEach(child => {
-            positionNode(child, x + 200, childY);
-            childY += 200;
+        if (el) { el.style.left = `${x}px`; el.style.top = `${y}px`; }
+        let childX = x - (node._w * spacingX - spacingX) / 2;
+        const childY = y + spacingY;
+        node.children.forEach(c => {
+            const width = c._w * spacingX;
+            position(c, childX + width / 2, childY);
+            childX += width;
         });
     }
 
-    hierarchy.children.forEach(node => {
-        positionNode(node, 30, startY);
-        startY += 200;
+    let startX = 30;
+    const startY = 30;
+    hierarchy.children.forEach(c => {
+        position(c, startX + (c._w * spacingX) / 2, startY);
+        startX += c._w * spacingX + spacingX;
     });
 
     redrawLines();
@@ -920,7 +966,6 @@ function setZoom(percent) {
     });
     const input = document.getElementById('zoom-input');
     if (input) input.value = Math.round(canvasScale * 100);
-    redrawLines();
 }
 
 function zoomCanvas(delta) {
@@ -993,6 +1038,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     updateVersionList();
     document.getElementById('layout-grid').addEventListener('click', layoutGrid);
+    const drop = document.getElementById('drop-zone');
+    if (drop) {
+        ['dragenter','dragover'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add('over'); }));
+        ['dragleave','drop'].forEach(ev => drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove('over'); }));
+        drop.addEventListener('drop', e => {
+            const file = e.dataTransfer.files[0];
+            if (file) handleImport({file});
+        });
+    }
+    const searchInput = document.getElementById('node-search');
+    if (searchInput) searchInput.addEventListener('input', highlightSearch);
     initCanvasPan();
 
     document.addEventListener('keydown', handleShortcuts);

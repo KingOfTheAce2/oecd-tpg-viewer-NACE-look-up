@@ -125,3 +125,20 @@
     margin-top: 5px;
     width: 100%;
 }
+
+/* Drag & Drop zone for CSV/XLSX */
+#drop-zone {
+    border: 2px dashed #aaa;
+    padding: 10px;
+    text-align: center;
+    color: #777;
+    margin: 0 auto 10px;
+}
+#drop-zone.over {
+    background: #f0f0f0;
+}
+
+/* Highlight search matches */
+.chart-node.search-highlight {
+    outline: 3px solid orange;
+}

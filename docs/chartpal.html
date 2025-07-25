@@ -14,6 +14,7 @@
   <script src="assets/chartpal/leader-line.min.js"></script>
   <script src="https://twemoji.maxcdn.com/v/latest/twemoji.min.js" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body class="chartpal-page">
   <div style="text-align:center;margin-bottom:20px;">
@@ -38,6 +39,9 @@
         <button id="add-branch">Add Branch</button>
         <button id="connect-nodes">Connect Nodes</button>
         <button id="delete-node">Delete Selected</button>
+      </div>
+      <div style="margin-top:10px;">
+        <input id="node-search" placeholder="Search entities" />
       </div>
       <div style="margin-top:10px;">
         <input id="jurisdiction-input" list="jurisdictions" placeholder="Select jurisdiction" />
@@ -80,7 +84,8 @@
   <div class="data-pane">
     <h2>CSV Data</h2>
     <p>You can upload a CSV file or edit the text below then click 'Import'.</p>
-    <input type="file" id="csvfile" accept=".csv" />
+    <input type="file" id="csvfile" accept=".csv,.xlsx" />
+    <div id="drop-zone">Drop CSV/XLSX here</div>
     <textarea id="csvtext" rows="10" placeholder="id,parent_id,name,ownership%,jurisdiction">id,parent_id,name,ownership%,jurisdiction\n</textarea>
     <button id="import-from-csv">Import from CSV</button>
     <div id="error-box" class="error"></div>
