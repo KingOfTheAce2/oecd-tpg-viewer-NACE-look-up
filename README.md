@@ -17,6 +17,16 @@ This repository contains a small static website with several tools:
 
 The site is contained entirely in the `docs/` directory and can be used locally or hosted on any static web server.
 
+## Sankey Diagram Generator
+
+The generator accepts data in CSV format using `source,target,value` columns or
+as a JSON array of objects with those keys. Data can be entered directly in the
+text box or by dragging a `.csv` or `.json` file onto the drop zone, which will
+render the chart automatically. Colour pickers and a font size input let you
+style the nodes and links, while orientation, width and height controls allow
+further layout customisation. Use the export buttons to download the data as CSV
+or JSON or save the diagram as a PNG image.
+
 ## Usage
 
 No build step is required. Open `docs/index.html` in a web browser. From there you can navigate to:

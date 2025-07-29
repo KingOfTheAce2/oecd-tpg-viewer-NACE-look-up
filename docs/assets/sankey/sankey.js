@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function () {
   const nodeColorInput = document.getElementById('nodeColor');
   const linkColorInput = document.getElementById('linkColor');
   const fontSizeInput = document.getElementById('fontSize');
+  const orientationInput = document.getElementById('orientation');
+  const widthInput = document.getElementById('chartWidth');
+  const heightInput = document.getElementById('chartHeight');
   const exportCsvBtn = document.getElementById('export-csv');
   const exportJsonBtn = document.getElementById('export-json');
   const exportPngBtn = document.getElementById('export-png');
@@ -74,8 +77,13 @@ document.addEventListener('DOMContentLoaded', function () {
     const rows = [['From', 'To', 'Weight']];
     data.forEach(d => rows.push([d.source, d.target, d.value]));
     const dataTable = google.visualization.arrayToDataTable(rows);
+    chartDiv.style.width = widthInput.value ? widthInput.value + 'px' : '';
+    chartDiv.style.height = heightInput.value ? heightInput.value + 'px' : '';
     const options = {
+      width: widthInput.value ? parseInt(widthInput.value, 10) : undefined,
+      height: heightInput.value ? parseInt(heightInput.value, 10) : undefined,
       sankey: {
+        orientation: orientationInput.value === 'vertical' ? 'vertical' : 'horizontal',
         node: {
           color: nodeColorInput.value,
           label: { fontSize: parseInt(fontSizeInput.value, 10) || 12 }
@@ -99,7 +107,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const file = e.dataTransfer.files[0];
     if (!file) return;
     const reader = new FileReader();
-    reader.onload = () => { textarea.value = reader.result.trim(); };
+    reader.onload = () => {
+      textarea.value = reader.result.trim();
+      const { data, error } = parseInput(textarea.value);
+      if (error) { showError(error); return; }
+      const issues = validateData(data);
+      if (issues.length) {
+        showError('Flow mismatch at nodes: ' + issues.join(', '));
+        return;
+      }
+      clearError();
+      chartData = data;
+      drawChart(chartData);
+    };
     reader.readAsText(file);
   });
 
