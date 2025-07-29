@@ -77,11 +77,11 @@ document.addEventListener('DOMContentLoaded', function () {
     const rows = [['From', 'To', 'Weight']];
     data.forEach(d => rows.push([d.source, d.target, d.value]));
     const dataTable = google.visualization.arrayToDataTable(rows);
-    chartDiv.style.width = widthInput.value ? widthInput.value + 'px' : '';
-    chartDiv.style.height = heightInput.value ? heightInput.value + 'px' : '';
+    chartDiv.style.width = widthInput.value ? widthInput.value + 'px' : '100%';
+    chartDiv.style.height = heightInput.value ? heightInput.value + 'px' : '500px';
     const options = {
-      width: widthInput.value ? parseInt(widthInput.value, 10) : undefined,
-      height: heightInput.value ? parseInt(heightInput.value, 10) : undefined,
+      width: widthInput.value ? parseInt(widthInput.value, 10) : chartDiv.clientWidth,
+      height: heightInput.value ? parseInt(heightInput.value, 10) : parseInt(chartDiv.style.height, 10),
       sankey: {
         orientation: orientationInput.value === 'vertical' ? 'vertical' : 'horizontal',
         node: {
