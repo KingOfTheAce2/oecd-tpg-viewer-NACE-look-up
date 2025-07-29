@@ -430,8 +430,8 @@ function drawChartFromData(records) {
             color: '#007bff',
             size: 2,
             path: 'grid',
-            startSocket: 'right',
-            endSocket: 'left',
+            startSocket: 'bottom',
+            endSocket: 'top',
             middleLabel: label
         };
         if (node.ownership && node.ownership < 100) {
@@ -620,8 +620,8 @@ function redrawLines() {
                 color: '#007bff',
                 size: 2,
                 path: 'grid',
-                startSocket: 'right',
-                endSocket: 'left',
+                startSocket: 'bottom',
+                endSocket: 'top',
                 middleLabel: label
             };
             if (node.ownership && node.ownership < 100) {
@@ -960,30 +960,30 @@ function toggleConnectMode() {
 function layoutGrid(spacingX = 200, spacingY = 200) {
     const hierarchy = buildHierarchy(Array.from(chartNodes.values()));
 
-    function calcHeight(node) {
-        if (!node.children.length) { node._h = 1; return 1; }
-        node._h = node.children.map(c => calcHeight(c)).reduce((a,b)=>a+b,0);
-        return node._h;
+    function calcWidth(node) {
+        if (!node.children.length) { node._w = 1; return 1; }
+        node._w = node.children.map(c => calcWidth(c)).reduce((a,b)=>a+b,0);
+        return node._w;
     }
-    hierarchy.children.forEach(calcHeight);
+    hierarchy.children.forEach(calcWidth);
 
     function position(node, x, y) {
         const el = document.getElementById(`node-${safeId(node.id)}`);
         if (el) { el.style.left = `${x}px`; el.style.top = `${y}px`; }
-        let childY = y - (node._h * spacingY - spacingY) / 2;
-        const childX = x + spacingX;
+        let childX = x - (node._w * spacingX - spacingX) / 2;
+        const childY = y + spacingY;
         node.children.forEach(c => {
-            const height = c._h * spacingY;
-            position(c, childX, childY + height / 2);
-            childY += height;
+            const width = c._w * spacingX;
+            position(c, childX + width / 2, childY);
+            childX += width;
         });
     }
 
-    let startY = 30;
-    const startX = 30;
+    let startX = 30;
+    const startY = 30;
     hierarchy.children.forEach(c => {
-        position(c, startX, startY + (c._h * spacingY) / 2);
-        startY += c._h * spacingY + spacingY;
+        position(c, startX + (c._w * spacingX) / 2, startY);
+        startX += c._w * spacingX + spacingX;
     });
 
     redrawLines();
