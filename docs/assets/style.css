@@ -68,27 +68,6 @@ input {
   border-color: #007bff; /* Added: Better visual feedback */
 }
 
-/* Full-page drop zone - Fixed conflicts with body max-width */
-.page-drop {
-  position: fixed; /* Fixed: Use fixed positioning instead of conflicting width rules */
-  top: 0;
-  left: 0;
-  width: 100vw; /* Use viewport width instead of 100% */
-  height: 100vh; /* Use viewport height */
-  margin: 0;
-  padding: 20px;
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background: #f9f9f9; /* Match body background */
-  z-index: 1000; /* Ensure it appears above other content */
-}
-
-.page-drop.drag {
-  background: #eef;
-}
 
 .example {
   background: #f0f0f0;
