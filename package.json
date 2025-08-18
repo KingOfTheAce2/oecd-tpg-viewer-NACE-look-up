@@ -1,0 +1,12 @@
+{
+  "name": "oecd-tpg-viewer-NACE-look-up",
+  "type": "module",
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "papaparse": "^5.4.1",
+    "jsdom": "^22.1.0"
+  },
+  "scripts": {
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand"
+  }
+}

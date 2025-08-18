@@ -1,3 +1,5 @@
+import { parseCsvText, buildHierarchy } from "./parser.js";
+import { layoutGrid as layoutGridImpl } from "./layout.js";
 // ChartPal - ASCII/Unicode Organisational Chart Builder
 let countryNames = {};
 let currentCsvText = '';
@@ -143,58 +145,6 @@ function readXlsxFile(file) {
     });
 }
 
-function parseCsvText(text) {
-    // Use PapaParse for robust CSV parsing
-    const result = Papa.parse(text.trim(), { header: true, skipEmptyLines: true });
-    if (result.errors.length > 0) {
-        console.error("CSV Parsing Errors:", result.errors);
-        throw new Error(`CSV Error: ${result.errors[0].message} on row ${result.errors[0].row}.`);
-    }
-    return result.data.map(r => {
-        // normalise keys to lower case for robustness
-        const rec = {};
-        Object.entries(r).forEach(([k,v]) => rec[k.trim().toLowerCase()] = v);
-
-        // Ensure parent_id=0 for root nodes if missing
-        if (!rec.parent_id) rec.parent_id = '0';
-
-        // support both ownership% and ownership columns
-        let ownVal = rec['ownership%'] || rec['ownership'] || '';
-        if (ownVal !== '') {
-            ownVal = String(ownVal).trim().replace('%','');
-            if (!isNaN(ownVal)) rec.ownership = parseFloat(ownVal);
-        }
-
-        rec.id = rec.id || '';
-        return rec;
-    });
-}
-
-function buildHierarchy(records) {
-    const nodes = new Map();
-    records.forEach(rec => {
-        // Clean up ownership percentage
-        if (rec['ownership%'] !== undefined) {
-             let val = String(rec['ownership%']).trim().replace('%', '');
-             if (val !== '' && !isNaN(val)) {
-                rec.ownership = parseFloat(val);
-             }
-        }
-        const x = rec.x !== undefined ? parseFloat(rec.x) : undefined;
-        const y = rec.y !== undefined ? parseFloat(rec.y) : undefined;
-        nodes.set(rec.id, { ...rec, x, y, children: [] });
-    });
-    
-    const roots = [];
-    nodes.forEach(node => {
-        if (node.parent_id && nodes.has(node.parent_id)) {
-            nodes.get(node.parent_id).children.push(node);
-        } else {
-            roots.push(node);
-        }
-    });
-    return { children: roots };
-}
 
 // --- OUTPUT GENERATORS ---
 
@@ -473,11 +423,18 @@ function renderNode(nodeData, x, y) {
     } else {
         const flag = nodeData.jurisdiction ? countryFlagEmoji(nodeData.jurisdiction) : '';
         const jurName = getJurisdictionName(nodeData.jurisdiction);
-        nodeEl.innerHTML = `
-            <span class="flag">${flag}</span>
-            <div class="company-name">${nodeData.name || 'Unnamed'}</div>
-            <div class="jurisdiction">${jurName}</div>
-        `;
+                const flagEl = document.createElement('span');
+        flagEl.className = 'flag';
+        flagEl.textContent = flag;
+        const nameEl = document.createElement('div');
+        nameEl.className = 'company-name';
+        nameEl.textContent = nodeData.name || 'Unnamed';
+        const jurEl = document.createElement('div');
+        jurEl.className = 'jurisdiction';
+        jurEl.textContent = jurName;
+        nodeEl.appendChild(flagEl);
+        nodeEl.appendChild(nameEl);
+        nodeEl.appendChild(jurEl);
     }
 
     canvas.appendChild(nodeEl);
@@ -539,23 +496,22 @@ function renderNode(nodeData, x, y) {
 function makeDraggable(element) {
     let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
     let startPositions = new Map();
-    element.onmousedown = dragMouseDown;
-
-    function dragMouseDown(e) {
+    const dragPointerDown = (e) => {
         e.preventDefault();
+        if (element.setPointerCapture) element.setPointerCapture(e.pointerId);
         pos3 = e.clientX;
         pos4 = e.clientY;
-        document.onmouseup = closeDragElement;
-        document.onmousemove = elementDrag;
+        document.addEventListener('pointerup', closeDragElement);
+        document.addEventListener('pointermove', elementDrag);
         const ids = selectedNodeIds.size && selectedNodeIds.has(element.dataset.id) ? selectedNodeIds : new Set([element.dataset.id]);
         startPositions.clear();
         ids.forEach(id => {
             const el = document.getElementById(`node-${safeId(id)}`);
             startPositions.set(id, {x: el.offsetLeft, y: el.offsetTop});
         });
-    }
-
-    function elementDrag(e) {
+        element.style.cursor = 'grabbing';
+    };
+    const elementDrag = (e) => {
         e.preventDefault();
         pos1 = pos3 - e.clientX;
         pos2 = pos4 - e.clientY;
@@ -564,19 +520,18 @@ function makeDraggable(element) {
         const ids = selectedNodeIds.size && selectedNodeIds.has(element.dataset.id) ? selectedNodeIds : new Set([element.dataset.id]);
         ids.forEach(id => {
             const el = document.getElementById(`node-${safeId(id)}`);
-            el.style.top = (el.offsetTop - pos2) + "px";
-            el.style.left = (el.offsetLeft - pos1) + "px";
+            el.style.top = (el.offsetTop - pos2) + 'px';
+            el.style.left = (el.offsetLeft - pos1) + 'px';
             const node = chartNodes.get(id);
             node.x = el.offsetLeft;
             node.y = el.offsetTop;
         });
         chartLines.forEach(line => line.position());
         updateCanvasSize();
-    }
-
-    function closeDragElement() {
-        document.onmouseup = null;
-        document.onmousemove = null;
+    };
+    const closeDragElement = (e) => {
+        document.removeEventListener('pointerup', closeDragElement);
+        document.removeEventListener('pointermove', elementDrag);
         const ids = selectedNodeIds.size && selectedNodeIds.has(element.dataset.id) ? selectedNodeIds : new Set([element.dataset.id]);
         const moves = [];
         ids.forEach(id => {
@@ -585,7 +540,10 @@ function makeDraggable(element) {
             moves.push({id, fromX:start.x, fromY:start.y, toX:el.offsetLeft, toY:el.offsetTop});
         });
         if (moves.length) pushHistory({type:'move', moves});
-    }
+        element.style.cursor = 'grab';
+    };
+    element.addEventListener('pointerdown', dragPointerDown);
+    element.style.cursor = 'grab';
 }
 
 function removeNodeById(id) {
@@ -958,36 +916,9 @@ function toggleConnectMode() {
 }
 
 function layoutGrid(spacingX = 200, spacingY = 200) {
-    const hierarchy = buildHierarchy(Array.from(chartNodes.values()));
-
-    function calcWidth(node) {
-        if (!node.children.length) { node._w = 1; return 1; }
-        node._w = node.children.map(c => calcWidth(c)).reduce((a,b)=>a+b,0);
-        return node._w;
-    }
-    hierarchy.children.forEach(calcWidth);
-
-    function position(node, x, y) {
-        const el = document.getElementById(`node-${safeId(node.id)}`);
-        if (el) { el.style.left = `${x}px`; el.style.top = `${y}px`; }
-        let childX = x - (node._w * spacingX - spacingX) / 2;
-        const childY = y + spacingY;
-        node.children.forEach(c => {
-            const width = c._w * spacingX;
-            position(c, childX + width / 2, childY);
-            childX += width;
-        });
-    }
-
-    let startX = 30;
-    const startY = 30;
-    hierarchy.children.forEach(c => {
-        position(c, startX + (c._w * spacingX) / 2, startY);
-        startX += c._w * spacingX + spacingX;
-    });
-
-    redrawLines();
+    layoutGridImpl(chartNodes, safeId, redrawLines, spacingX, spacingY);
 }
+
 
 function setZoom(percent) {
     canvasScale = Math.max(20, Math.min(300, percent)) / 100;
