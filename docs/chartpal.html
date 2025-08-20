@@ -21,8 +21,8 @@
     <a class="app-link" href="index.html">Home</a>
   </div>
   <h1 style="text-align:center;">ChartPal - Interactive Org Chart Builder</h1>
-  <p class="legend" style="text-align:center;">Solid line = 100% ownership, dotted line = less than 100% ownership.</p>
-  <p style="text-align:center;font-size:0.9em;">Keyboard shortcuts: <strong>N</strong> add entity,&nbsp;<strong>B</strong> add branch,&nbsp;<strong>C</strong> connect,&nbsp;<strong>Delete</strong> remove,&nbsp;<strong>Ctrl+Z/Ctrl+Y</strong> undo/redo,&nbsp;<strong>+</strong>/<strong>-</strong> zoom, hold <strong>Space</strong> and drag to pan.</p>
+  <p class="legend" style="text-align:center;">Solid line = 100% ownership, dotted line = less than 100% ownership, green dashed line = director/board relation.</p>
+  <p style="text-align:center;font-size:0.9em;">Keyboard shortcuts: <strong>N</strong> add entity,&nbsp;<strong>B</strong> add branch,&nbsp;<strong>P</strong> add person,&nbsp;<strong>C</strong> connect,&nbsp;<strong>D</strong> link director,&nbsp;<strong>Delete</strong> remove,&nbsp;<strong>Ctrl+Z/Ctrl+Y</strong> undo/redo,&nbsp;<strong>+</strong>/<strong>-</strong> zoom, hold <strong>Space</strong> and drag to pan.</p>
 
   <div class="main-container">
     <div class="tree-pane">
@@ -39,7 +39,9 @@
       <div class="action-buttons">
         <button id="add-node">Add Entity</button>
         <button id="add-branch">Add Branch</button>
+        <button id="add-person">Add Person</button>
         <button id="connect-nodes">Connect Nodes</button>
+        <button id="link-director">Link Director</button>
         <button id="delete-node">Delete Selected</button>
       </div>
       <div style="margin-top:10px;">
@@ -89,7 +91,7 @@
     <p>You can upload a CSV file or edit the text below then click 'Import'.</p>
     <input type="file" id="csvfile" accept=".csv,.xlsx" />
     <div id="drop-zone">Drop CSV/XLSX here</div>
-    <textarea id="csvtext" rows="10" placeholder="id,parent_id,name,ownership%,jurisdiction">id,parent_id,name,ownership%,jurisdiction\n</textarea>
+    <textarea id="csvtext" rows="10" placeholder="id,parent_id,name,ownership%,jurisdiction,type">id,parent_id,name,ownership%,jurisdiction,type\n</textarea>
     <button id="import-from-csv">Import from CSV</button>
     <button id="clear-import">Clear</button>
     <div id="error-box" class="error"></div>

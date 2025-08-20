@@ -14,3 +14,9 @@ test('buildHierarchy throws on duplicate id', () => {
   ];
   expect(() => buildHierarchy(records)).toThrow(/Duplicate id/);
 });
+
+test('parseCsvText parses type column', () => {
+  const csv = 'id,parent_id,name,type\n1,0,Alice,person';
+  const records = parseCsvText(csv);
+  expect(records[0].isPerson).toBe(true);
+});

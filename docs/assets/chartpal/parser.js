@@ -7,6 +7,11 @@ export function parseCsvText(text) {
   return result.data.map((r, idx) => {
     const rec = {};
     Object.entries(r).forEach(([k, v]) => (rec[k.trim().toLowerCase()] = v));
+    if (rec.type) {
+      const t = String(rec.type).toLowerCase();
+      if (t === 'branch') rec.isBranch = true;
+      if (t === 'person') rec.isPerson = true;
+    }
     if (!rec.parent_id) rec.parent_id = '0';
     let ownVal = rec['ownership%'] || rec['ownership'] || '';
     if (ownVal !== '') {
