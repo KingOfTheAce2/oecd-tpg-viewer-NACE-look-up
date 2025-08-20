@@ -1,7 +1,8 @@
 import { parseCsvText, buildHierarchy } from "./parser.js";
 import { layoutGrid as layoutGridImpl } from "./layout.js";
 // ChartPal - ASCII/Unicode Organisational Chart Builder
-let countryNames = {};
+let countryNames = { en: {}, de: {}, nl: {} };
+let currentLanguage = 'en';
 let currentCsvText = '';
 let currentZoom = 100; // Zoom level in percent
 // --- History & Selection ---
@@ -110,20 +111,18 @@ function resetChart() {
 
 // --- DATA & PARSING ---
 
-async function loadCountryNames(url = 'assets/chartpal/country_names.json') {
+async function loadCountryNames() {
     try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Could not load country names');
-    const data = await response.json();
-        // Handle both array-of-objects and plain object structures
-        if (Array.isArray(data)) {
-            countryNames = data.reduce((acc, country) => {
-                acc[country.code] = country.name;
-                return acc;
-            }, {});
-        } else {
-            countryNames = data;
-        }
+        const [enRes, deRes, nlRes] = await Promise.all([
+            fetch('assets/chartpal/country_names.json'),
+            fetch('assets/chartpal/country_names_de.json'),
+            fetch('assets/chartpal/country_names_nl.json')
+        ]);
+        if (!enRes.ok || !deRes.ok || !nlRes.ok) throw new Error('Could not load country names');
+        const en = await enRes.json();
+        const de = await deRes.json();
+        const nl = await nlRes.json();
+        countryNames = { en, de, nl };
         if (document.getElementById('jurisdiction-list')) {
             populateJurisdictionReference();
         }
@@ -289,7 +288,8 @@ function populateJurisdictionReference() {
     const list = document.getElementById('jurisdiction-list');
     if (!list) return;
     list.innerHTML = ''; // Clear existing
-    Object.entries(countryNames).forEach(([code, name]) => {
+    Object.keys(countryNames.en).forEach(code => {
+        const name = getJurisdictionName(code);
         const li = document.createElement('li');
         li.textContent = `${countryFlagEmoji(code)} ${name}`;
         li.dataset.search = `${code} ${name}`.toLowerCase();
@@ -316,7 +316,8 @@ function populateJurisdictionDatalist() {
     const datalist = document.getElementById('jurisdictions');
     if (!datalist) return;
     datalist.innerHTML = '';
-    Object.entries(countryNames).forEach(([code, name]) => {
+    Object.keys(countryNames.en).forEach(code => {
+        const name = getJurisdictionName(code);
         const opt = document.createElement('option');
         opt.value = name;
         opt.dataset.code = code;
@@ -329,7 +330,8 @@ function populateJurisdictionDatalist() {
 
 function getJurisdictionName(code) {
     if (!code) return 'N/A';
-    return countryNames[code.toUpperCase()] || code;
+    const upper = code.toUpperCase();
+    return countryNames[currentLanguage][upper] || countryNames.en[upper] || upper;
 }
 
 function updateTreeView() {
@@ -751,7 +753,8 @@ function deleteVersion(name) {
 }
 
 function exportImage(type) {
-    const node = document.getElementById('chart');
+    const node = document.getElementById('canvas');
+    redrawLines();
     html2canvas(node).then(canvas => {
         if (type === 'png') {
             const data = canvas.toDataURL('image/png');
@@ -892,8 +895,8 @@ function handleChangeJurisdiction() {
     const value = input.value.trim();
     if (!value) return;
     let code = value.toUpperCase();
-    if (!countryNames[code]) {
-        code = Object.keys(countryNames).find(c => countryNames[c].toLowerCase() === value.toLowerCase());
+    if (!countryNames.en[code]) {
+        code = Object.keys(countryNames.en).find(c => getJurisdictionName(c).toLowerCase() === value.toLowerCase());
     }
     if (!code) {
         showError('Unknown jurisdiction');
@@ -1043,6 +1046,22 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('change-jurisdiction').addEventListener('click', handleChangeJurisdiction);
     document.getElementById('change-name').addEventListener('click', handleChangeName);
     document.getElementById('change-ownership').addEventListener('click', handleChangeOwnership);
+    const langSel = document.getElementById('language-select');
+    if (langSel) {
+        langSel.addEventListener('change', () => {
+            currentLanguage = langSel.value;
+            populateJurisdictionReference();
+            populateJurisdictionDatalist();
+            chartNodes.forEach(node => {
+                const el = document.getElementById(`node-${safeId(node.id)}`);
+                if (el) {
+                    const jurEl = el.querySelector('.jurisdiction');
+                    if (jurEl) jurEl.textContent = getJurisdictionName(node.jurisdiction);
+                    if (window.twemoji) twemoji.parse(el);
+                }
+            });
+        });
+    }
     document.getElementById('zoom-in').addEventListener('click', () => zoomCanvas(0.1));
     document.getElementById('zoom-out').addEventListener('click', () => zoomCanvas(-0.1));
     const zoomInput = document.getElementById('zoom-input');
