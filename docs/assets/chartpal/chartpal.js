@@ -71,19 +71,27 @@ function applyHistory(action, isUndo) {
                 updateTreeView();
             }
             break;
+        case 'boardlink':
+            if (isUndo) {
+                boardLinks = boardLinks.filter(l => !(l.from === action.from && l.to === action.to));
+            } else {
+                boardLinks.push({from: action.from, to: action.to});
+            }
+            redrawLines();
+            break;
     }
 }
 
 function saveChartLocal() {
-    const data = JSON.stringify(Array.from(chartNodes.values()));
+    const data = JSON.stringify({ nodes: Array.from(chartNodes.values()), boardLinks });
     localStorage.setItem('chartpal-data', data);
 }
 
 function loadChartLocal() {
     const data = localStorage.getItem('chartpal-data');
     if (data) {
-        const records = JSON.parse(data);
-        drawChartFromData(records);
+        const obj = JSON.parse(data);
+        drawChartFromData(obj);
     }
 }
 
@@ -93,6 +101,7 @@ function resetChart() {
     canvas.innerHTML = '';
     chartLines.forEach(l => l.remove());
     chartLines = [];
+    boardLinks = [];
     undoStack = [];
     redoStack = [];
     localStorage.removeItem('chartpal-data');
@@ -341,6 +350,9 @@ let chartLines = []; // Stores the LeaderLine instances
 let selectedNodeId = null; // Currently selected node
 let connectMode = false;
 let connectParentId = null;
+let boardLinkMode = false;
+let boardLinkStartId = null;
+let boardLinks = [];
 let canvasScale = 1;
 
 function safeId(id) {
@@ -348,56 +360,28 @@ function safeId(id) {
 }
 
 // --- Main function to draw the chart from data ---
-function drawChartFromData(records) {
-    // 1. Clear existing canvas
+function drawChartFromData(data) {
+    const records = Array.isArray(data) ? data : (data.nodes || []);
+    boardLinks = Array.isArray(data.boardLinks) ? data.boardLinks : [];
+
     const canvas = document.getElementById('chart');
     canvas.innerHTML = '';
     chartLines.forEach(line => line.remove());
     chartLines = [];
     chartNodes.clear();
 
-    // 2. Create and store node data
     const nodesData = buildHierarchy(records);
-    
-    // 3. Render boxes and store them in our map
-    let xPos = 30; // Initial horizontal position
+
+    let xPos = 30;
     nodesData.children.forEach(nodeData => {
         const x = typeof nodeData.x === 'number' ? nodeData.x : xPos;
         const y = typeof nodeData.y === 'number' ? nodeData.y : 30;
         renderNode(nodeData, x, y);
-        xPos = x + 200; // Stagger next root horizontally
+        xPos = x + 200;
     });
-    
-    // 4. Draw connecting lines
-    chartNodes.forEach(node => {
-        if (node.parent_id && chartNodes.has(node.parent_id)) {
-        const parentEl = document.getElementById(`node-${safeId(node.parent_id)}`);
-        const childEl = document.getElementById(`node-${safeId(node.id)}`);
 
-        const label = LeaderLine.pathLabel(`${node.ownership || 100}%`);
-        label.style.fontSize = '14px';
-        const options = {
-            color: '#007bff',
-            size: 2,
-            path: 'grid',
-            startSocket: 'bottom',
-            endSocket: 'top',
-            middleLabel: label
-        };
-        if (node.ownership && node.ownership < 100) {
-            options.dash = {len: 4, gap: 4};
-        }
-        const line = new LeaderLine(parentEl, childEl, options);
-        if (line.middleLabel && line.middleLabel.nodeType === 1) {
-            line.middleLabel.style.transform = `scale(${1 / canvasScale})`;
-            line.middleLabel.style.pointerEvents = 'none';
-        }
-        if (line.line) line.line.style.pointerEvents = 'none';
-        chartLines.push(line);
-        }
-    });
-    
-    // 5. Update the side tree view
+    redrawLines();
+
     const pre = document.getElementById('tree-output-display');
     pre.textContent = generateTreeOutput(nodesData);
     if (window.twemoji) twemoji.parse(pre);
@@ -411,6 +395,7 @@ function renderNode(nodeData, x, y) {
     nodeEl.id = `node-${safeId(nodeData.id)}`;
     nodeEl.className = 'chart-node';
     if (nodeData.isBranch) nodeEl.classList.add('branch-node');
+    if (nodeData.isPerson) nodeEl.classList.add('person-node');
     nodeEl.dataset.id = nodeData.id;
     nodeEl.style.left = `${x}px`;
     nodeEl.style.top = `${y}px`;
@@ -420,10 +405,12 @@ function renderNode(nodeData, x, y) {
     // Populate the box content
     if (nodeData.isBranch) {
         nodeEl.textContent = nodeData.name || 'Branch';
+    } else if (nodeData.isPerson) {
+        nodeEl.textContent = nodeData.name || 'Person';
     } else {
         const flag = nodeData.jurisdiction ? countryFlagEmoji(nodeData.jurisdiction) : '';
         const jurName = getJurisdictionName(nodeData.jurisdiction);
-                const flagEl = document.createElement('span');
+        const flagEl = document.createElement('span');
         flagEl.className = 'flag';
         flagEl.textContent = flag;
         const nameEl = document.createElement('div');
@@ -445,6 +432,22 @@ function renderNode(nodeData, x, y) {
     makeDraggable(nodeEl);
 
     nodeEl.addEventListener('click', (e) => {
+        if (boardLinkMode) {
+            if (!boardLinkStartId) {
+                boardLinkStartId = nodeData.id;
+                nodeEl.classList.add('selected');
+            } else {
+                if (boardLinkStartId !== nodeData.id) {
+                    boardLinks.push({from: boardLinkStartId, to: nodeData.id});
+                    redrawLines();
+                    pushHistory({type:'boardlink', from: boardLinkStartId, to: nodeData.id});
+                }
+                document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
+                boardLinkStartId = null;
+                boardLinkMode = false;
+            }
+            return;
+        }
         if (connectMode) {
             if (!connectParentId) {
                 connectParentId = nodeData.id;
@@ -550,6 +553,7 @@ function removeNodeById(id) {
     const el = document.getElementById(`node-${safeId(id)}`);
     if (el && el.parentNode) el.parentNode.removeChild(el);
     chartNodes.delete(id);
+    boardLinks = boardLinks.filter(l => l.from !== id && l.to !== id);
     chartLines = chartLines.filter(line => {
         if (line.start && line.end) {
             const sid = line.start.id.replace('node-','');
@@ -594,6 +598,20 @@ function redrawLines() {
             chartLines.push(line);
         }
     });
+    boardLinks.forEach(link => {
+        if (chartNodes.has(link.from) && chartNodes.has(link.to)) {
+            const startEl = document.getElementById(`node-${safeId(link.from)}`);
+            const endEl = document.getElementById(`node-${safeId(link.to)}`);
+            const line = new LeaderLine(startEl, endEl, {
+                color: '#28a745',
+                size: 2,
+                dash: {len: 2, gap: 4},
+                path: 'straight'
+            });
+            if (line.line) line.line.style.pointerEvents = 'none';
+            chartLines.push(line);
+        }
+    });
 }
 
 function updateCanvasSize() {
@@ -610,7 +628,7 @@ function updateCanvasSize() {
 
 // --- NEW: Functions to keep CSV text in sync and to export ---
 function generateCsvText() {
-    const headers = "id,parent_id,name,ownership%,jurisdiction";
+    const headers = "id,parent_id,name,ownership%,jurisdiction,type";
     let csvContent = [headers];
 
     chartNodes.forEach(node => {
@@ -619,7 +637,8 @@ function generateCsvText() {
             node.parent_id || '0',
             `\"${node.name}\"`,
             node.ownership || '',
-            node.jurisdiction || ''
+            node.jurisdiction || '',
+            node.isPerson ? 'person' : (node.isBranch ? 'branch' : '')
         ].join(',');
         csvContent.push(row);
     });
@@ -671,7 +690,7 @@ function exportToCsv() {
 }
 
 function exportJson() {
-    const data = JSON.stringify(Array.from(chartNodes.values()), null, 2);
+    const data = JSON.stringify({ nodes: Array.from(chartNodes.values()), boardLinks }, null, 2);
     const blob = new Blob([data], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -686,8 +705,8 @@ function importJson(evt) {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = () => {
-        const records = JSON.parse(reader.result);
-        drawChartFromData(records);
+        const obj = JSON.parse(reader.result);
+        drawChartFromData(obj);
     };
     reader.readAsText(file);
     evt.target.value = '';
@@ -698,7 +717,7 @@ function saveVersion() {
     if (!nameInput) return;
     const name = nameInput.value.trim();
     if (!name) return;
-    const data = JSON.stringify(Array.from(chartNodes.values()));
+    const data = JSON.stringify({ nodes: Array.from(chartNodes.values()), boardLinks });
     localStorage.setItem('chartpal-version-' + name, data);
     updateVersionList();
     nameInput.value = '';
@@ -707,8 +726,8 @@ function saveVersion() {
 function loadVersion(name) {
     const data = localStorage.getItem('chartpal-version-' + name);
     if (!data) return;
-    const records = JSON.parse(data);
-    drawChartFromData(records);
+    const obj = JSON.parse(data);
+    drawChartFromData(obj);
 }
 
 function updateVersionList() {
@@ -775,7 +794,9 @@ function handleShortcuts(e) {
     if (e.key === 'Delete') { e.preventDefault(); handleDeleteSelected(); return; }
     if (e.key.toLowerCase() === 'n') { e.preventDefault(); handleAddNode(); return; }
     if (e.key.toLowerCase() === 'b') { e.preventDefault(); handleAddBranch(); return; }
+    if (e.key.toLowerCase() === 'p') { e.preventDefault(); handleAddPerson(); return; }
     if (e.key.toLowerCase() === 'c') { e.preventDefault(); toggleConnectMode(); return; }
+    if (e.key.toLowerCase() === 'd') { e.preventDefault(); toggleBoardLinkMode(); return; }
     if (e.key === '+') { e.preventDefault(); zoomCanvas(0.1); return; }
     if (e.key === '-') { e.preventDefault(); zoomCanvas(-0.1); return; }
 }
@@ -849,6 +870,21 @@ function handleAddBranch() {
     redrawLines();
 }
 
+function handleAddPerson() {
+    const newId = (Math.max(0, ...Array.from(chartNodes.keys()).map(k => parseInt(k))) + 1).toString();
+    const newNodeData = {
+        id: newId,
+        parent_id: '0',
+        name: `Person ${newId}`,
+        isPerson: true,
+        children: []
+    };
+    renderNode(newNodeData, 50, 50);
+    pushHistory({type:'add', node:{...newNodeData, x:50, y:50}});
+    updateTreeView();
+    redrawLines();
+}
+
 function handleChangeJurisdiction() {
     if (!selectedNodeId) return;
     const input = document.getElementById('jurisdiction-input');
@@ -867,8 +903,10 @@ function handleChangeJurisdiction() {
     node.jurisdiction = code;
     const el = document.getElementById(`node-${safeId(selectedNodeId)}`);
     if (el) {
-        el.querySelector('.flag').textContent = countryFlagEmoji(code);
-        el.querySelector('.jurisdiction').textContent = getJurisdictionName(code);
+        const flagEl = el.querySelector('.flag');
+        if (flagEl) flagEl.textContent = countryFlagEmoji(code);
+        const jurEl = el.querySelector('.jurisdiction');
+        if (jurEl) jurEl.textContent = getJurisdictionName(code);
         if (window.twemoji) twemoji.parse(el);
     }
     input.value = '';
@@ -885,7 +923,8 @@ function handleChangeName() {
     node.name = value;
     const el = document.getElementById(`node-${safeId(selectedNodeId)}`);
     if (el) {
-        el.querySelector('.company-name').textContent = value;
+        const nameEl = el.querySelector('.company-name');
+        if (nameEl) nameEl.textContent = value; else el.textContent = value;
     }
     input.value = '';
     updateTreeView();
@@ -912,6 +951,12 @@ function handleChangeOwnership() {
 function toggleConnectMode() {
     connectMode = !connectMode;
     connectParentId = null;
+    document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
+}
+
+function toggleBoardLinkMode() {
+    boardLinkMode = !boardLinkMode;
+    boardLinkStartId = null;
     document.querySelectorAll('.chart-node.selected').forEach(el => el.classList.remove('selected'));
 }
 
@@ -990,7 +1035,11 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('add-node').addEventListener('click', handleAddNode);
     const branchBtn = document.getElementById('add-branch');
     if (branchBtn) branchBtn.addEventListener('click', handleAddBranch);
+    const personBtn = document.getElementById('add-person');
+    if (personBtn) personBtn.addEventListener('click', handleAddPerson);
     document.getElementById('connect-nodes').addEventListener('click', toggleConnectMode);
+    const linkBtn = document.getElementById('link-director');
+    if (linkBtn) linkBtn.addEventListener('click', toggleBoardLinkMode);
     document.getElementById('change-jurisdiction').addEventListener('click', handleChangeJurisdiction);
     document.getElementById('change-name').addEventListener('click', handleChangeName);
     document.getElementById('change-ownership').addEventListener('click', handleChangeOwnership);
