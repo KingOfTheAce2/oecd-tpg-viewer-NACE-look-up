@@ -1,0 +1,3 @@
+Documentnummer,Aantal transacties,Datum van publicatie,Start looptijd,Einde looptijd,Type verzoek,Vaste inrichting,"Branche, industrie of sector",Partij 1,Partij 2,"Functies, activa en risico's van partij 1","Functies, activa en risico's van partij 2",Transactie,Methode,Lower quartile,Upper quartile,Opmerking,"Edge case?"
+APA001,2,2023-01-01,2023-01-01,2025-01-01,Type A,No,Manufacturing,Company A,Company B,Functions A,Functions B,Sale,CUP,100,200,Note 1,
+APA002,3,2023-02-01,2023-02-01,2024-02-01,Type B,Yes,Services,Company C,Company D,Functions C,Functions D,Service,COST+,150,250,Note 2,Yes
