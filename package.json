@@ -8,6 +8,7 @@
     "xlsx": "^0.18.5"
   },
   "scripts": {
-    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand"
+    "test": "node --experimental-vm-modules ./node_modules/jest/bin/jest.js --runInBand",
+    "build-crosswalk": "cd crosswalks && node create_naics_nace_crosswalk.js"
   }
 }

@@ -1,0 +1,39 @@
+{
+  "filename_overrides": {
+    "OECD_TPG_EN_2022.pdf": {"year": "2022", "language": "EN"},
+    "OECD_TPG_DE_2022.pdf": {"year": "2022", "language": "DE"},
+    "OECD_TPG_ES_2022.pdf": {"year": "2022", "language": "ES"},
+    "OECD_TPG_FR_2022.pdf": {"year": "2022", "language": "FR"},
+    "OECD_TPG_JP_2022.pdf": {"year": "2022", "language": "JP"},
+    "OECD_TPG_SK_2022.pdf": {"year": "2022", "language": "SK"},
+    "OECD_TPG_EN_2017.pdf": {"year": "2017", "language": "EN"},
+    "OECD_TPG_DE_2017.pdf": {"year": "2017", "language": "DE"},
+    "OECD_TPG_ES_2017.pdf": {"year": "2017", "language": "ES"},
+    "OECD_TPG_FR_2017.pdf": {"year": "2017", "language": "FR"},
+    "OECD_TPG_JP_2017.pdf": {"year": "2017", "language": "JP"},
+    "OECD_TPG_TR_2017.pdf": {"year": "2017", "language": "TR"},
+    "OECD_TPG_ZH_2017.pdf": {"year": "2017", "language": "ZH"},
+    "OECD_TPG_CZ_2017.pdf": {"year": "2017", "language": "CZ"},
+    "OECD_TPG_EN_2010.pdf": {"year": "2010", "language": "EN"},
+    "OECD_TPG_DE_2010.pdf": {"year": "2010", "language": "DE"},
+    "OECD_TPG_ES_2010.pdf": {"year": "2010", "language": "ES"},
+    "OECD_TPG_FR_2010.pdf": {"year": "2010", "language": "FR"},
+    "OECD_TPG_HU_2010.pdf": {"year": "2010", "language": "HU"},
+    "OECD_TPG_IT_2010.pdf": {"year": "2010", "language": "IT"},
+    "OECD_TPG_RS_2010.pdf": {"year": "2010", "language": "RS"},
+    "OECD_TPG_SI_2010.pdf": {"year": "2010", "language": "SI"},
+    "OECD_TPG_UA_2010.pdf": {"year": "2010", "language": "UA"}
+  },
+  "parsing_options": {
+    "skip_empty_sections": true,
+    "min_paragraph_length": 10,
+    "extract_metadata": true,
+    "normalize_text": true
+  },
+  "output_options": {
+    "pretty_print": true,
+    "sort_keys": true,
+    "ensure_ascii": false,
+    "indent": 2
+  }
+}

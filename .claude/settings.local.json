@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node:*)",
+      "Bash(npm install)",
+      "Bash(npm run build-crosswalk:*)",
+      "Bash(grep:*)",
+      "Bash(tree:*)",
+      "Bash(npm audit:*)",
+      "Bash(find:*)",
+      "Bash(npm test)",
+      "Bash(pip install:*)",
+      "Bash(python:*)",
+      "Bash(timeout:*)",
+      "Bash(dir:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -6,8 +6,9 @@ This repository contains a small static website with several tools:
 2. **NACE Rev. 2.1 Code Finder** – an interface for searching activities in the NACE classification.
 3. **NAICS Code Finder** – a similar viewer for the North American Industry Classification System.
 4. **Side‑by‑Side Viewer** – display the NACE and NAICS finders together for easy comparison.
-5. **Sankey Diagram Generator** – create simple Sankey diagrams from CSV/JSON data.
-6. **ChartPal** – A client-side organisational chart builder written in vanilla JavaScript.
+5. **Classification Crosswalks** – browse and download mappings between NAICS 2022 and NACE Rev. 2.1.
+6. **Sankey Diagram Generator** – create simple Sankey diagrams from CSV/JSON data.
+7. **ChartPal** – A client-side organisational chart builder written in vanilla JavaScript.
    The diagram uses a top‑down orientation with connections drawn from the bottom
    of a parent box to the top of its children. The tool supports undo/redo history, local saves, PNG/SVG export and
    keyboard shortcuts. Hold <kbd>Shift</kbd> or <kbd>Ctrl</kbd> when clicking to
@@ -37,6 +38,7 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
 * `nace.html` – loads `assets/nace/nace-app.js` which renders the NACE code finder using React.
 * `naics.html` – loads `assets/naics/naics-app.js` for viewing NAICS data.
 * `nace-naics.html` – shows both viewers side by side on one page.
+* `crosswalks.html` – browse and search the NAICS 2022 to NACE Rev. 2.1 crosswalk.
 * `sankey.html` – a simple page for creating Sankey diagrams.
 * `chartpal.html` – a static organisational chart builder that runs entirely in the browser.
 
@@ -49,6 +51,7 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
   nace.html           # NACE Code Finder page
   naics.html          # NAICS Code Finder page
   nace-naics.html     # Combined viewer for NACE and NAICS
+  crosswalks.html     # Classification crosswalks browser
   sankey.html         # Sankey Diagram Generator page
   chartpal.html       # Client-side organisational chart builder
   /assets
@@ -72,7 +75,26 @@ No build step is required. Open `docs/index.html` in a web browser. From there y
       papaparse.min.js   # CSV parsing library
       country_names.json # Reference for jurisdiction codes
       style.css          # Styles for ChartPal
+/crosswalks               # Classification system correspondence tables
+  *.xlsx, *.txt           # Original correspondence table files
+  *.csv, *.json           # Generated NAICS-NACE crosswalk files
+  create_naics_nace_crosswalk.js  # Script to generate crosswalk
+  README.md               # Crosswalk documentation
 ```
+
+## Classification Crosswalks
+
+The repository includes comprehensive correspondence tables for mapping between different industry classification systems:
+
+* **NAICS 2022** ↔ **ISIC Rev. 4** ↔ **NACE Rev. 2** → **NACE Rev. 2.1**
+
+To regenerate the NAICS 2022 to NACE Rev. 2.1 crosswalk:
+
+```bash
+npm run build-crosswalk
+```
+
+This creates CSV and JSON files with 8,017+ mappings between the systems. See `crosswalks/README.md` for detailed documentation.
 
 ## Notes
 
