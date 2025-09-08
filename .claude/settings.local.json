@@ -15,7 +15,12 @@
       "Bash(npm run build:*)",
       "Bash(npm run:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "WebFetch(domain:kingoftheace2.github.io)",
+      "Bash(python:*)",
+      "Bash(git push:*)",
+      "Bash(timeout:*)",
+      "Bash(git ls-tree:*)"
     ],
     "deny": []
   },
