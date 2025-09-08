@@ -1,20 +1,27 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node:*)",
-      "Bash(npm install)",
-      "Bash(npm run build-crosswalk:*)",
-      "Bash(grep:*)",
-      "Bash(tree:*)",
-      "Bash(npm audit:*)",
-      "Bash(find:*)",
+      "mcp__ruv-swarm",
+      "mcp__claude-flow",
+      "Bash(npx:*)",
+      "Bash(mkdir:*)",
+      "Bash(cp:*)",
+      "Bash(dir tests)",
       "Bash(npm test)",
-      "Bash(pip install:*)",
-      "Bash(python:*)",
-      "Bash(timeout:*)",
-      "Bash(dir:*)"
+      "Bash(dir)",
+      "Bash(node:*)",
+      "Bash(npm install:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)"
     ],
-    "deny": [],
-    "ask": []
-  }
+    "deny": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "claude-flow",
+    "ruv-swarm"
+  ]
 }

@@ -1,0 +1,82 @@
+{
+  "metadata": {
+    "created": "2025-01-15T10:00:00.000Z",
+    "description": "Sample crosswalk mapping for testing",
+    "mappingPath": "NAICS 2022 → ISIC Rev. 4 → NACE Rev. 2 → NACE Rev. 2.1",
+    "totalMappings": 4
+  },
+  "crosswalk": [
+    {
+      "naics2022Code": "111110",
+      "naics2022Title": "Soybean Farming",
+      "isicRev4Code": "111",
+      "isicRev4Title": "Growing of cereals (except rice), leguminous crops and oil seeds",
+      "naceRev2Code": "01.11",
+      "naceRev2Title": "Growing of cereals",
+      "naceRev21Code": "01.11",
+      "naceRev21Title": "Growing of cereals (except rice), leguminous crops and oil seeds",
+      "mappingPath": "NAICS→ISIC→NACE2→NACE2.1 (zero-padded)",
+      "mappingNotes": "Mapping via zero-padded from child 0111",
+      "partialMappings": {
+        "naicsPartial": false,
+        "isicPartial": true,
+        "nacePartial": false
+      },
+      "mappingQuality": "inferred"
+    },
+    {
+      "naics2022Code": "111120",
+      "naics2022Title": "Oilseed (except Soybean) Farming",
+      "isicRev4Code": "111",
+      "isicRev4Title": "Growing of cereals (except rice), leguminous crops and oil seeds",
+      "naceRev2Code": "01.11",
+      "naceRev2Title": "Growing of cereals",
+      "naceRev21Code": "01.11",
+      "naceRev21Title": "Growing of cereals (except rice), leguminous crops and oil seeds",
+      "mappingPath": "NAICS→ISIC→NACE",
+      "mappingNotes": "Direct mapping through ISIC",
+      "partialMappings": {
+        "naicsPartial": false,
+        "isicPartial": false,
+        "nacePartial": false
+      },
+      "mappingQuality": "direct"
+    },
+    {
+      "naics2022Code": "221111",
+      "naics2022Title": "Hydroelectric Power Generation",
+      "isicRev4Code": "351",
+      "isicRev4Title": "Electric power generation, transmission and distribution",
+      "naceRev2Code": "35.11",
+      "naceRev2Title": "Production of electricity",
+      "naceRev21Code": "35.11",
+      "naceRev21Title": "Production of electricity",
+      "mappingPath": "NAICS→ISIC→NACE",
+      "mappingNotes": "Complete mapping",
+      "partialMappings": {
+        "naicsPartial": false,
+        "isicPartial": false,
+        "nacePartial": false
+      },
+      "mappingQuality": "direct"
+    },
+    {
+      "naics2022Code": "541511",
+      "naics2022Title": "Custom Computer Programming Services",
+      "isicRev4Code": "620",
+      "isicRev4Title": "Computer programming, consultancy and related activities",
+      "naceRev2Code": "62.01",
+      "naceRev2Title": "Computer programming activities",
+      "naceRev21Code": "62.01",
+      "naceRev21Title": "Computer programming activities",
+      "mappingPath": "NAICS→ISIC→NACE",
+      "mappingNotes": "Technology services mapping",
+      "partialMappings": {
+        "naicsPartial": false,
+        "isicPartial": false,
+        "nacePartial": false
+      },
+      "mappingQuality": "direct"
+    }
+  ]
+}

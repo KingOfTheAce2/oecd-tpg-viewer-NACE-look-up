@@ -78,6 +78,7 @@ function loadIsicToNace() {
     const lines = content.split('\n').filter(line => line.trim());
     
     const isicToNace = {};
+    const hierarchyMap = {}; // Track ISIC hierarchy for intelligent fallback
     
     for (let i = 1; i < lines.length; i++) { // Skip header
         const fields = parseCSVLine(lines[i]);
@@ -96,11 +97,32 @@ function loadIsicToNace() {
                     isicPart: isicPart,
                     nacePart: nacePart
                 });
+                
+                // Build hierarchy mapping for fallback logic
+                const codeLength = isicCode.length;
+                if (codeLength === 4) {
+                    const parent3 = isicCode.substring(0, 3);
+                    const parent2 = isicCode.substring(0, 2);
+                    const parent1 = isicCode.substring(0, 1);
+                    
+                    if (!hierarchyMap[parent3]) hierarchyMap[parent3] = [];
+                    if (!hierarchyMap[parent2]) hierarchyMap[parent2] = [];
+                    if (!hierarchyMap[parent1]) hierarchyMap[parent1] = [];
+                    
+                    hierarchyMap[parent3].push(isicCode);
+                    hierarchyMap[parent2].push(isicCode);
+                    hierarchyMap[parent1].push(isicCode);
+                }
             }
         }
     }
     
     console.log(`Loaded ${Object.keys(isicToNace).length} ISIC codes with mappings to NACE Rev. 2`);
+    console.log(`Built hierarchy map with ${Object.keys(hierarchyMap).length} parent codes`);
+    
+    // Store hierarchy map for use in crosswalk generation
+    isicToNace._hierarchyMap = hierarchyMap;
+    
     return isicToNace;
 }
 
@@ -156,67 +178,131 @@ function loadNaceToNace21() {
 function createNaicsToNaceCrosswalk(naicsToIsic, isicToNace, naceToNace21) {
     console.log('Creating NAICS 2022 to NACE Rev. 2.1 crosswalk...');
     const crosswalk = [];
+    const hierarchyMap = isicToNace._hierarchyMap || {};
+    let mappingsFound = 0;
+    let mappingsWithFallback = 0;
+    let mappingsWithoutNace = 0;
+    
+    // Function to find NACE mapping using intelligent fallback
+    function findNaceMapping(isicCode, isicMapping) {
+        // Try exact match first
+        if (isicToNace[isicCode]) {
+            return { mappings: isicToNace[isicCode], method: 'exact' };
+        }
+        
+        // Try adding leading zero for 3-digit codes (e.g., "111" -> "0111")
+        if (isicCode.length === 3) {
+            const paddedCode = '0' + isicCode;
+            if (isicToNace[paddedCode]) {
+                return { mappings: isicToNace[paddedCode], method: 'zero-padded' };
+            }
+        }
+        
+        // Try finding child codes in hierarchy
+        const childCodes = hierarchyMap[isicCode] || [];
+        if (childCodes.length > 0) {
+            const childMappings = [];
+            childCodes.forEach(childCode => {
+                if (isicToNace[childCode]) {
+                    childMappings.push(...isicToNace[childCode].map(mapping => ({
+                        ...mapping,
+                        fromChild: childCode
+                    })));
+                }
+            });
+            if (childMappings.length > 0) {
+                return { mappings: childMappings, method: 'hierarchy-expansion' };
+            }
+        }
+        
+        // Try finding parent code
+        if (isicCode.length > 1) {
+            for (let len = isicCode.length - 1; len >= 1; len--) {
+                const parentCode = isicCode.substring(0, len);
+                if (isicToNace[parentCode]) {
+                    return { 
+                        mappings: isicToNace[parentCode].map(mapping => ({
+                            ...mapping,
+                            fromParent: parentCode
+                        })), 
+                        method: 'parent-fallback' 
+                    };
+                }
+            }
+        }
+        
+        return { mappings: [], method: 'no-mapping' };
+    }
     
     Object.keys(naicsToIsic).forEach(naicsCode => {
         const isicMappings = naicsToIsic[naicsCode];
         
         isicMappings.forEach(isicMapping => {
             const isicCode = isicMapping.isicCode;
-            const naceMappings = isicToNace[isicCode] || [];
+            const naceResult = findNaceMapping(isicCode, isicMapping);
+            const naceMappings = naceResult.mappings;
             
-            naceMappings.forEach(naceMapping => {
-                const naceCode = naceMapping.naceCode;
-                const nace21Mappings = naceToNace21[naceCode] || [];
+            if (naceMappings.length > 0) {
+                mappingsFound++;
+                if (naceResult.method !== 'exact') {
+                    mappingsWithFallback++;
+                }
                 
-                if (nace21Mappings.length === 0) {
-                    // Direct mapping to NACE Rev. 2 if no NACE 2.1 mapping exists
-                    crosswalk.push({
-                        naics2022Code: naicsCode,
-                        naics2022Title: isicMapping.naicsTitle,
-                        isicRev4Code: isicCode,
-                        isicRev4Title: isicMapping.isicTitle,
-                        naceRev2Code: naceCode,
-                        naceRev2Title: '',
-                        naceRev21Code: naceCode, // Same as Rev. 2 if no update
-                        naceRev21Title: '',
-                        mappingPath: 'NAICS→ISIC→NACE2',
-                        mappingNotes: isicMapping.notes,
-                        partialMappings: {
-                            naicsPartial: isicMapping.partOfNaics,
-                            isicPartial: isicMapping.partOfIsic,
-                            nacePartial: naceMapping.nacePart
-                        }
-                    });
-                } else {
-                    nace21Mappings.forEach(nace21Mapping => {
+                naceMappings.forEach(naceMapping => {
+                    const naceCode = naceMapping.naceCode;
+                    const nace21Mappings = naceToNace21[naceCode] || [];
+                    
+                    if (nace21Mappings.length === 0) {
+                        // Direct mapping to NACE Rev. 2 if no NACE 2.1 mapping exists
                         crosswalk.push({
                             naics2022Code: naicsCode,
                             naics2022Title: isicMapping.naicsTitle,
                             isicRev4Code: isicCode,
                             isicRev4Title: isicMapping.isicTitle,
                             naceRev2Code: naceCode,
-                            naceRev2Title: nace21Mapping.nace2Title,
-                            naceRev21Code: nace21Mapping.nace21Code,
-                            naceRev21Title: nace21Mapping.nace21Title,
-                            mappingPath: 'NAICS→ISIC→NACE2→NACE2.1',
-                            mappingNotes: isicMapping.notes,
+                            naceRev2Title: '',
+                            naceRev21Code: naceCode, // Same as Rev. 2 if no update
+                            naceRev21Title: '',
+                            mappingPath: naceResult.method === 'exact' ? 'NAICS→ISIC→NACE2' : `NAICS→ISIC→NACE2 (${naceResult.method})`,
+                            mappingNotes: `${isicMapping.notes}${naceResult.method !== 'exact' ? ` | Mapping via ${naceResult.method}` : ''}${naceMapping.fromChild ? ` from child ${naceMapping.fromChild}` : ''}${naceMapping.fromParent ? ` from parent ${naceMapping.fromParent}` : ''}`,
                             partialMappings: {
                                 naicsPartial: isicMapping.partOfNaics,
-                                isicPartial: isicMapping.partOfIsic,
+                                isicPartial: isicMapping.partOfIsic || naceResult.method !== 'exact',
                                 nacePartial: naceMapping.nacePart
                             },
-                            naceUpdateInfo: {
-                                mappingType: nace21Mapping.mappingType,
-                                correspondenceType: nace21Mapping.correspondenceType,
-                                commonContent: nace21Mapping.commonContent
-                            }
+                            mappingQuality: naceResult.method === 'exact' ? 'direct' : 'inferred'
                         });
-                    });
-                }
-            });
-            
-            // Handle ISIC codes without NACE mappings
-            if (naceMappings.length === 0) {
+                    } else {
+                        nace21Mappings.forEach(nace21Mapping => {
+                            crosswalk.push({
+                                naics2022Code: naicsCode,
+                                naics2022Title: isicMapping.naicsTitle,
+                                isicRev4Code: isicCode,
+                                isicRev4Title: isicMapping.isicTitle,
+                                naceRev2Code: naceCode,
+                                naceRev2Title: nace21Mapping.nace2Title,
+                                naceRev21Code: nace21Mapping.nace21Code,
+                                naceRev21Title: nace21Mapping.nace21Title,
+                                mappingPath: naceResult.method === 'exact' ? 'NAICS→ISIC→NACE2→NACE2.1' : `NAICS→ISIC→NACE2→NACE2.1 (${naceResult.method})`,
+                                mappingNotes: `${isicMapping.notes}${naceResult.method !== 'exact' ? ` | Mapping via ${naceResult.method}` : ''}${naceMapping.fromChild ? ` from child ${naceMapping.fromChild}` : ''}${naceMapping.fromParent ? ` from parent ${naceMapping.fromParent}` : ''}`,
+                                partialMappings: {
+                                    naicsPartial: isicMapping.partOfNaics,
+                                    isicPartial: isicMapping.partOfIsic || naceResult.method !== 'exact',
+                                    nacePartial: naceMapping.nacePart
+                                },
+                                naceUpdateInfo: {
+                                    mappingType: nace21Mapping.mappingType,
+                                    correspondenceType: nace21Mapping.correspondenceType,
+                                    commonContent: nace21Mapping.commonContent
+                                },
+                                mappingQuality: naceResult.method === 'exact' ? 'direct' : 'inferred'
+                            });
+                        });
+                    }
+                });
+            } else {
+                // Handle ISIC codes without NACE mappings (after all fallback attempts)
+                mappingsWithoutNace++;
                 crosswalk.push({
                     naics2022Code: naicsCode,
                     naics2022Title: isicMapping.naicsTitle,
@@ -227,18 +313,22 @@ function createNaicsToNaceCrosswalk(naicsToIsic, isicToNace, naceToNace21) {
                     naceRev21Code: '',
                     naceRev21Title: '',
                     mappingPath: 'NAICS→ISIC (no NACE mapping)',
-                    mappingNotes: `${isicMapping.notes} | No NACE mapping found for ISIC ${isicCode}`,
+                    mappingNotes: `${isicMapping.notes} | No NACE mapping found for ISIC ${isicCode} (tried all fallback methods)`,
                     partialMappings: {
                         naicsPartial: isicMapping.partOfNaics,
                         isicPartial: isicMapping.partOfIsic,
                         nacePartial: false
-                    }
+                    },
+                    mappingQuality: 'failed'
                 });
             }
         });
     });
     
     console.log(`Created crosswalk with ${crosswalk.length} mappings`);
+    console.log(`Mappings with NACE codes: ${mappingsFound}`);
+    console.log(`Mappings using fallback methods: ${mappingsWithFallback}`);
+    console.log(`Mappings without NACE codes: ${mappingsWithoutNace}`);
     return crosswalk;
 }
 
@@ -260,7 +350,8 @@ function saveToCSV(crosswalk, outputPath) {
         'NACE_Partial',
         'NACE_Mapping_Type',
         'NACE_Correspondence_Type',
-        'NACE_Common_Content'
+        'NACE_Common_Content',
+        'Mapping_Quality'
     ];
     
     let csvContent = headers.join(',') + '\n';
@@ -282,7 +373,8 @@ function saveToCSV(crosswalk, outputPath) {
             row.partialMappings?.nacePartial || false,
             `"${(row.naceUpdateInfo?.mappingType || '').replace(/"/g, '""')}"`,
             `"${(row.naceUpdateInfo?.correspondenceType || '').replace(/"/g, '""')}"`,
-            `"${(row.naceUpdateInfo?.commonContent || '').replace(/"/g, '""')}"`
+            `"${(row.naceUpdateInfo?.commonContent || '').replace(/"/g, '""')}"`,
+            `"${row.mappingQuality || 'unknown'}"`
         ];
         csvContent += csvRow.join(',') + '\n';
     });
@@ -331,6 +423,20 @@ function generateStatistics(crosswalk) {
     console.log(`Mappings with NACE codes: ${mappingsWithNace}`);
     console.log(`Mappings without NACE codes: ${mappingsWithoutNace}`);
     console.log(`Partial mappings: ${partialMappings}`);
+    console.log(`Coverage rate: ${((mappingsWithNace / crosswalk.length) * 100).toFixed(1)}%`);
+    
+    // Mapping quality breakdown
+    const qualityBreakdown = {};
+    crosswalk.forEach(row => {
+        const quality = row.mappingQuality || 'unknown';
+        qualityBreakdown[quality] = (qualityBreakdown[quality] || 0) + 1;
+    });
+    
+    console.log('\nMapping quality distribution:');
+    Object.entries(qualityBreakdown).forEach(([quality, count]) => {
+        const percentage = ((count / crosswalk.length) * 100).toFixed(1);
+        console.log(`  ${quality}: ${count} (${percentage}%)`);
+    });
     
     const mappingPaths = {};
     crosswalk.forEach(row => {
@@ -339,8 +445,29 @@ function generateStatistics(crosswalk) {
     
     console.log('\nMapping paths distribution:');
     Object.entries(mappingPaths).forEach(([path, count]) => {
-        console.log(`  ${path}: ${count}`);
+        const percentage = ((count / crosswalk.length) * 100).toFixed(1);
+        console.log(`  ${path}: ${count} (${percentage}%)`);
     });
+    
+    // Identify most common fallback methods
+    const fallbackMethods = crosswalk.filter(row => 
+        row.mappingQuality === 'inferred'
+    ).map(row => {
+        const match = row.mappingPath.match(/\(([^)]+)\)/);
+        return match ? match[1] : 'unknown';
+    });
+    
+    if (fallbackMethods.length > 0) {
+        const fallbackCount = {};
+        fallbackMethods.forEach(method => {
+            fallbackCount[method] = (fallbackCount[method] || 0) + 1;
+        });
+        
+        console.log('\nFallback methods used:');
+        Object.entries(fallbackCount).forEach(([method, count]) => {
+            console.log(`  ${method}: ${count}`);
+        });
+    }
 }
 
 async function main() {
