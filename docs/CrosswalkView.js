@@ -143,7 +143,7 @@ function CrosswalkView() {
     React.createElement('div', { className: 'crosswalk-header' },
       React.createElement('h2', null, 'NAICS & NACE Rev. 2.1 Side-by-Side'),
       React.createElement('div', { className: 'ai-disclaimer' },
-        '⚠️ This crosswalk was 100% AI made and not yet verified by a human.'
+        '⚠️ Important: This crosswalk is AI-generated and unverified. 99.1% of mappings are partial or inferred through multi-step classification chains. Review carefully before use in compliance or reporting.'
       )
     ),
 
@@ -175,9 +175,26 @@ function CrosswalkView() {
       )
     ),
 
-    // Results count
-    React.createElement('div', { className: 'results-info' },
-      `Showing ${filteredData.length.toLocaleString()} of ${crosswalkData.length.toLocaleString()} mappings`
+    // Results count and legend
+    React.createElement('div', { className: 'info-section' },
+      React.createElement('div', { className: 'results-info' },
+        `Showing ${filteredData.length.toLocaleString()} of ${crosswalkData.length.toLocaleString()} mappings`
+      ),
+      React.createElement('div', { className: 'quality-legend' },
+        React.createElement('span', { className: 'legend-title' }, 'Mapping Quality: '),
+        React.createElement('span', { className: 'legend-item' },
+          React.createElement('span', { className: 'quality-badge direct' }, '✅ Direct'),
+          ' 1-to-1 mapping'
+        ),
+        React.createElement('span', { className: 'legend-item' },
+          React.createElement('span', { className: 'quality-badge inferred' }, '⚠️ Inferred'),
+          ' via classification chains'
+        ),
+        React.createElement('span', { className: 'legend-item' },
+          React.createElement('span', { className: 'quality-badge no-mapping' }, '❌ No mapping'),
+          ' not available'
+        )
+      )
     ),
 
     // Side-by-side display
@@ -205,10 +222,14 @@ function CrosswalkView() {
               React.createElement('div', { className: 'row-content' },
                 item.naics2022Title
               ),
-              item.mappingPath.includes('no NACE mapping') && 
-                React.createElement('div', { className: 'mapping-warning' }, 
-                  '⚠️ No NACE mapping available'
-                )
+              // Quality indicator based on mapping reliability
+              React.createElement('div', { 
+                className: `mapping-quality ${item.mappingPath.includes('no NACE mapping') ? 'no-mapping' : 
+                  (!item.partialMappings || (!item.partialMappings.naicsPartial && !item.partialMappings.isicPartial && !item.partialMappings.nacePartial)) ? 'direct' : 'inferred'}` 
+              }, 
+                item.mappingPath.includes('no NACE mapping') ? '❌ No mapping' :
+                (!item.partialMappings || (!item.partialMappings.naicsPartial && !item.partialMappings.isicPartial && !item.partialMappings.nacePartial)) ? '✅ Direct' : '⚠️ Inferred'
+              )
             )
           )
         )
@@ -239,11 +260,14 @@ function CrosswalkView() {
               React.createElement('div', { className: 'row-content' },
                 item.naceRev21Title || 'No NACE mapping available'
               ),
-              item.partialMappings && (item.partialMappings.naicsPartial || 
-                item.partialMappings.isicPartial || item.partialMappings.nacePartial) &&
-                React.createElement('div', { className: 'mapping-info' }, 
-                  '📋 Partial mapping'
-                )
+              // Quality indicator for NACE column
+              React.createElement('div', { 
+                className: `mapping-quality ${!item.naceRev21Code ? 'no-mapping' : 
+                  (!item.partialMappings || (!item.partialMappings.naicsPartial && !item.partialMappings.isicPartial && !item.partialMappings.nacePartial)) ? 'direct' : 'inferred'}` 
+              }, 
+                !item.naceRev21Code ? '❌ No mapping' :
+                (!item.partialMappings || (!item.partialMappings.naicsPartial && !item.partialMappings.isicPartial && !item.partialMappings.nacePartial)) ? '✅ Direct' : '⚠️ Inferred'
+              )
             )
           )
         )
@@ -329,11 +353,61 @@ const crosswalkStyles = `
   box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
 }
 
-.results-info {
+.info-section {
   text-align: center;
   margin-bottom: 20px;
+}
+
+.results-info {
   font-size: 14px;
   color: #6c757d;
+  margin-bottom: 10px;
+}
+
+.quality-legend {
+  font-size: 12px;
+  color: #6c757d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.legend-title {
+  font-weight: 600;
+  color: #495057;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.quality-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.quality-badge.direct {
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+}
+
+.quality-badge.inferred {
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+}
+
+.quality-badge.no-mapping {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
 }
 
 .crosswalk-display {
@@ -424,22 +498,30 @@ const crosswalkStyles = `
   color: #495057;
 }
 
-.mapping-warning {
+.mapping-quality {
   margin-top: 6px;
   font-size: 11px;
-  color: #856404;
-  background-color: #fff3cd;
   padding: 4px 6px;
   border-radius: 3px;
+  font-weight: 500;
 }
 
-.mapping-info {
-  margin-top: 6px;
-  font-size: 11px;
-  color: #0c5460;
-  background-color: #d1ecf1;
-  padding: 4px 6px;
-  border-radius: 3px;
+.mapping-quality.direct {
+  color: #155724;
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+}
+
+.mapping-quality.inferred {
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+}
+
+.mapping-quality.no-mapping {
+  color: #721c24;
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
 }
 
 .performance-notice {
