@@ -153,25 +153,91 @@ function loadNaceToNace21() {
     const data = XLSX.utils.sheet_to_json(worksheet, { range: headerRowIndex });
     
     const naceToNace21 = {};
+    const levelHierarchy = {}; // Track hierarchy levels for intelligent selection
+    
+    // First pass: collect all mappings and organize by hierarchy level
     data.forEach(row => {
         const nace2Code = row['NACE Rev. 2 Code'];
         const nace21Code = row['NACE Rev. 2.1 Code'];
-        if (nace2Code && nace21Code) {
-            if (!naceToNace21[nace2Code]) {
-                naceToNace21[nace2Code] = [];
-            }
-            naceToNace21[nace2Code].push({
+        const level = row['Level'];
+        
+        if (nace2Code && nace21Code && level) {
+            const mappingData = {
                 nace21Code: nace21Code,
                 nace2Title: row['NACE Rev. 2 Heading'] || '',
                 nace21Title: row['NACE Rev. 2.1 Heading'] || '',
                 mappingType: row['Type of mapping from the NACE Rev. 2 code(s) to NACE Rev. 2.1 code(s)'] || row['Type of mapping'] || '',
                 correspondenceType: row['Type of correspondence'] || '',
-                commonContent: row['Common content identified for the NACE Rev. 2 class and the NACE Rev. 2.1 class'] || row['Common content identified'] || ''
+                commonContent: row['Common content identified for the NACE Rev. 2 class and the NACE Rev. 2.1 class'] || row['Common content identified'] || '',
+                level: level
+            };
+            
+            if (!levelHierarchy[nace2Code]) {
+                levelHierarchy[nace2Code] = {};
+            }
+            if (!levelHierarchy[nace2Code][level]) {
+                levelHierarchy[nace2Code][level] = [];
+            }
+            levelHierarchy[nace2Code][level].push(mappingData);
+        }
+    });
+    
+    // Second pass: select the most specific mappings (prefer Level 4 class codes)
+    Object.keys(levelHierarchy).forEach(nace2Code => {
+        const levels = levelHierarchy[nace2Code];
+        
+        // Prefer Level 4 (class codes - XX.XX), then Level 3 (group codes - XX.X), then higher levels
+        let selectedMappings = [];
+        
+        if (levels[4] && levels[4].length > 0) {
+            // Level 4: Class codes (most specific - preferred)
+            selectedMappings = levels[4];
+        } else if (levels[3] && levels[3].length > 0) {
+            // Level 3: Group codes (acceptable fallback)
+            selectedMappings = levels[3];
+        } else if (levels[2] && levels[2].length > 0) {
+            // Level 2: Division codes (only if no specific codes available)
+            selectedMappings = levels[2];
+            console.warn(`Using division code for ${nace2Code} - no specific class/group mapping available`);
+        } else if (levels[1] && levels[1].length > 0) {
+            // Level 1: Section codes (last resort)
+            selectedMappings = levels[1];
+            console.warn(`Using section code for ${nace2Code} - no specific mapping available`);
+        }
+        
+        if (selectedMappings.length > 0) {
+            naceToNace21[nace2Code] = selectedMappings.map(mapping => {
+                // Remove the level property from final output
+                const { level, ...finalMapping } = mapping;
+                return finalMapping;
             });
         }
     });
     
+    // Generate statistics on code specificity
+    const stats = { level1: 0, level2: 0, level3: 0, level4: 0 };
+    Object.values(naceToNace21).forEach(mappings => {
+        mappings.forEach(mapping => {
+            const code = mapping.nace21Code;
+            if (/^[A-Z]$/.test(code)) {
+                stats.level1++; // Section
+            } else if (/^[0-9]{1,2}$/.test(code)) {
+                stats.level2++; // Division
+            } else if (/^[0-9]{1,2}\.[0-9]{1}$/.test(code)) {
+                stats.level3++; // Group
+            } else if (/^[0-9]{1,2}\.[0-9]{2}$/.test(code)) {
+                stats.level4++; // Class (preferred)
+            }
+        });
+    });
+    
     console.log(`Loaded ${Object.keys(naceToNace21).length} NACE Rev. 2 codes with mappings to NACE Rev. 2.1`);
+    console.log(`Code specificity distribution:`);
+    console.log(`  Level 4 (Class codes XX.XX): ${stats.level4} (${((stats.level4 / (stats.level1 + stats.level2 + stats.level3 + stats.level4)) * 100).toFixed(1)}%)`);
+    console.log(`  Level 3 (Group codes XX.X): ${stats.level3} (${((stats.level3 / (stats.level1 + stats.level2 + stats.level3 + stats.level4)) * 100).toFixed(1)}%)`);
+    console.log(`  Level 2 (Division codes XX): ${stats.level2} (${((stats.level2 / (stats.level1 + stats.level2 + stats.level3 + stats.level4)) * 100).toFixed(1)}%)`);
+    console.log(`  Level 1 (Section codes X): ${stats.level1} (${((stats.level1 / (stats.level1 + stats.level2 + stats.level3 + stats.level4)) * 100).toFixed(1)}%)`);
+    
     return naceToNace21;
 }
 
