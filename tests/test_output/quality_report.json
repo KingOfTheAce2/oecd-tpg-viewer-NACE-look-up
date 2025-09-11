@@ -1,0 +1,23 @@
+{
+  "summary": {
+    "files_processed": 1,
+    "total_sections": 12,
+    "total_items": 61,
+    "total_pages": 424
+  },
+  "quality_metrics": {
+    "OECD_TPG_ES_2010.pdf": {
+      "quality_score": 3,
+      "quality_percentage": 60.0,
+      "sections": 12,
+      "items": 61,
+      "pages": 424,
+      "extraction_method": "PyMuPDF",
+      "avg_items_per_section": 5.1
+    }
+  },
+  "recommendations": [
+    "Consider improving extraction algorithms for better quality",
+    "Verify that all relevant content is being extracted"
+  ]
+}

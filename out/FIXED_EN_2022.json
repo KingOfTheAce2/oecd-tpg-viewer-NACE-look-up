@@ -1,0 +1,958 @@
+{
+  "metadata": {
+    "year": 2022,
+    "language": "EN",
+    "title": "OECD Transfer Pricing Guidelines for Multinational Enterprises and Tax Administrations",
+    "extracted_date": "2025-09-11T07:08:59.060045",
+    "source_file": "OECD_TPG_EN_2022.pdf"
+  },
+  "sections": {
+    "Preface": [
+      {
+        "id": "1",
+        "text": "Article 4, which defines residence; Articles 5 and 7, which determine the \ntaxation of permanent establishments; Article 9, which relates to the taxation \nof the profits of associated enterprises and applies the arm’s length principle; \nArticles 10, 11, and 12, which determine the taxation of dividends, interest, \nand royalties, respectively; and Articles 24, 25, and 26, which contain special \nprovisions relating to non-discrimination, the resolution of disputes, and \nexchange of information",
+        "page": 15
+      },
+      {
+        "id": "2",
+        "text": "The Committee on Fiscal Affairs, which is the main tax policy body \nof the OECD, has issued a number of reports relating to the application of \nthese Articles to MNEs and to others",
+        "page": 15
+      },
+      {
+        "id": "3",
+        "text": "The Committee has encouraged the \nacceptance of common interpretations of these Articles, thereby reducing the \nrisk of inappropriate taxation and providing satisfactory means of resolving \nproblems arising from the interaction of the laws and practices of different \njurisdictions",
+        "page": 15
+      },
+      {
+        "id": "4",
+        "text": "In applying the foregoing principles to the taxation of MNEs, one of \nthe most difficult issues that has arisen is the establishment for tax purposes \nof appropriate transfer prices",
+        "page": 15
+      },
+      {
+        "id": "5",
+        "text": "Transfer prices are the prices at which an \nenterprise transfers physical goods and intangible property or provides services \nto associated enterprises",
+        "page": 15
+      },
+      {
+        "id": "6",
+        "text": "For purposes of these Guidelines, an “associated \nenterprise” is an enterprise that satisfies the conditions set forth in Article 9, \nsub-paragraphs 1a) and 1b) of the OECD Model Tax Convention",
+        "page": 15
+      },
+      {
+        "id": "7",
+        "text": "Under these \nconditions, two enterprises are associated if one of the enterprises participates \ndirectly or indirectly in the management, control, or capital of the other or if \n“the same persons participate directly or indirectly in the management, control, \nor capital” of both enterprises (i if both enterprises are under common \ncontrol)",
+        "page": 15
+      },
+      {
+        "id": "8",
+        "text": "The issues discussed in these Guidelines also arise in the treatment \nof permanent establishments as discussed in the Report on the Attribution of \nProfits to Permanent Establishments that was adopted by the OECD Council \nin July 2010, which supersedes the OECD Report Model Tax Convention: \nAttribution of Income to Permanent Establishments (1994)",
+        "page": 15
+      },
+      {
+        "id": "9",
+        "text": "Some relevant \ndiscussion may also be found in the OECD Report International Tax Avoidance \nand Evasion (1987)",
+        "page": 15
+      },
+      {
+        "id": "10",
+        "text": "Transfer prices are significant for both taxpayers and tax administrations \nbecause they determine in large part the income and expenses, and therefore \ntaxable profits, of associated enterprises in different tax jurisdictions",
+        "page": 15
+      },
+      {
+        "id": "11",
+        "text": "Transfer \npricing issues originally arose in transactions between associated enterprises \noperating within the same tax jurisdiction",
+        "page": 15
+      },
+      {
+        "id": "12",
+        "text": "The domestic issues are not \nconsidered in these Guidelines, which focus on the international aspects of \ntransfer pricing",
+        "page": 15
+      },
+      {
+        "id": "13",
+        "text": "These international aspects are more difficult to deal with \nbecause they involve more than one tax jurisdiction and therefore any adjustment \nto the transfer price in one jurisdiction implies that a corresponding change in \nanother jurisdiction is appropriate",
+        "page": 15
+      },
+      {
+        "id": "14",
+        "text": "However, if the other jurisdiction does not",
+        "page": 15
+      },
+      {
+        "id": "15",
+        "text": "14 – Preface\nagree to make a corresponding adjustment the MNE group will be taxed twice \non this part of its profits",
+        "page": 16
+      },
+      {
+        "id": "16",
+        "text": "In order to minimise the risk of such double taxation, \nan international consensus is required on how to establish for tax purposes \ntransfer prices on cross-border transactions",
+        "page": 16
+      },
+      {
+        "id": "17",
+        "text": "These Guidelines are intended to be a revision and compilation of \nprevious reports by the OECD Committee on Fiscal Affairs addressing \ntransfer pricing and other related tax issues with respect to multinational \nenterprises",
+        "page": 16
+      },
+      {
+        "id": "18",
+        "text": "The principal report is Transfer Pricing and Multinational \nEnterprises (1979) (the “1979 Report”) which was repealed by the OECD \nCouncil in 1995",
+        "page": 16
+      },
+      {
+        "id": "19",
+        "text": "Other reports address transfer pricing issues in the context \nof specific topics",
+        "page": 16
+      },
+      {
+        "id": "20",
+        "text": "These reports are Transfer Pricing and Multinational \nEnterprises – Three Taxation Issues (1984) (the “1984 Report”), and Thin \nCapitalisation (the “1987 Report”)",
+        "page": 16
+      },
+      {
+        "id": "21",
+        "text": "A list of amendments made to these \nGuidelines is included in the Foreword",
+        "page": 16
+      },
+      {
+        "id": "22",
+        "text": "These Guidelines also draw upon the discussion undertaken by the \nOECD on the proposed transfer pricing regulations in the United States [see \nthe OECD Report Tax Aspects of Transfer Pricing within Multinational \nEnterprises: The United States Proposed Regulations (1993)]",
+        "page": 16
+      },
+      {
+        "id": "23",
+        "text": "However, the \ncontext in which that Report was written was very different from that in \nwhich these Guidelines have been undertaken, its scope was far more limited, \nand it specifically addressed the United States proposed regulations",
+        "page": 16
+      },
+      {
+        "id": "24",
+        "text": "OECD member countries continue to endorse the arm’s length \nprinciple as embodied in the OECD Model Tax Convention (and in the bilateral \nconventions that legally bind treaty partners in this respect) and in the 1979 \nReport",
+        "page": 16
+      },
+      {
+        "id": "25",
+        "text": "These Guidelines focus on the application of the arm’s length principle \nto evaluate the transfer pricing of associated enterprises",
+        "page": 16
+      },
+      {
+        "id": "26",
+        "text": "The Guidelines are \nintended to help tax administrations (of both OECD member countries and non­-\nmember countries) and MNEs by indicating ways to find mutually satisfactory \nsolutions to transfer pricing cases, thereby minimising conflict among tax \nadministrations and between tax administrations and MNEs and avoiding \ncostly litigation",
+        "page": 16
+      },
+      {
+        "id": "27",
+        "text": "The Guidelines analyse the methods for evaluating whether \nthe conditions of commercial and financial relations within an MNE satisfy the \narm’s length principle and discuss the practical application of those methods",
+        "page": 16
+      },
+      {
+        "id": "28",
+        "text": "They also include a discussion of global formulary apportionment",
+        "page": 16
+      },
+      {
+        "id": "29",
+        "text": "OECD member countries are encouraged to follow these Guidelines \nin their domestic transfer pricing practices, and taxpayers are encouraged to \nfollow these Guidelines in evaluating for tax purposes whether their transfer \npricing complies with the arm’s length principle",
+        "page": 16
+      },
+      {
+        "id": "30",
+        "text": "Tax administrations are \nencouraged to take into account the taxpayer’s commercial judgement about \nthe application of the arm’s length principle in their examination practices \nand to undertake their analyses of transfer pricing from that perspective",
+        "page": 16
+      },
+      {
+        "id": "31",
+        "text": "These Guidelines are also intended primarily to govern the resolution \nof transfer pricing cases in mutual agreement proceedings between OECD \nmember countries and, where appropriate, arbitration proceedings",
+        "page": 17
+      },
+      {
+        "id": "32",
+        "text": "They \nfurther provide guidance when a corresponding adjustment request has been \nmade",
+        "page": 17
+      },
+      {
+        "id": "33",
+        "text": "The Commentary on paragraph 2 of Article 9 of the OECD Model Tax \nConvention makes clear that the State from which a corresponding adjustment \nis requested should comply with the request only if that State “considers that \nthe figure of adjusted profits correctly reflects what the profits would have been \nif the transactions had been at arm’s length”",
+        "page": 17
+      },
+      {
+        "id": "34",
+        "text": "This means that in competent \nauthority proceedings the State that has proposed the primary adjustment bears \nthe burden of demonstrating to the other State that the adjustment “is justified \nboth in principle and as regards the amount",
+        "page": 17
+      },
+      {
+        "id": "35",
+        "text": "” Both competent authorities are \nexpected to take a co‑operative approach in resolving mutual agreement cases",
+        "page": 17
+      },
+      {
+        "id": "36",
+        "text": "In seeking to achieve the balance between the interests of taxpayers \nand tax administrators in a way that is fair to all parties, it is necessary to \nconsider all aspects of the system that are relevant in a transfer pricing case",
+        "page": 17
+      },
+      {
+        "id": "37",
+        "text": "One such aspect is the allocation of the burden of proof",
+        "page": 17
+      },
+      {
+        "id": "38",
+        "text": "In most jurisdictions, \nthe tax administration bears the burden of proof, which may require the tax \nadministra­tion to make a prima facie showing that the taxpayer’s pricing \nis inconsistent with the arm’s length principle",
+        "page": 17
+      },
+      {
+        "id": "39",
+        "text": "It should be noted, however, \nthat even in such a case a tax administration might still reasonably oblige the \ntaxpayer to produce its records to enable the tax administration to undertake its \nexamination of the controlled transactions",
+        "page": 17
+      },
+      {
+        "id": "40",
+        "text": "In other jurisdictions the taxpayer \nmay bear the burden of proof in some respects",
+        "page": 17
+      },
+      {
+        "id": "41",
+        "text": "Some OECD member countries \nare of the view that Article 9 of the OECD Model Tax Convention establishes \nburden of proof rules in transfer pricing cases which override any contrary \ndomestic provisions",
+        "page": 17
+      },
+      {
+        "id": "42",
+        "text": "Other countries, however, consider that Article 9 does not \nestablish burden of proof rules (cf paragraph 4 of the Commentary on Article 9 \nof the OECD Model Tax Convention)",
+        "page": 17
+      },
+      {
+        "id": "43",
+        "text": "Regardless of which party bears the \nburden of proof, an assessment of the fairness of the allocation of the burden of \nproof would have to be made in view of the other features of the jurisdiction’s \ntax system that have a bearing on the overall administration of transfer pricing \nrules, including the resolution of disputes",
+        "page": 17
+      },
+      {
+        "id": "44",
+        "text": "These features include penalties, \nexamination practices, administrative appeals processes, rules regarding \npayment of interest with respect to tax assessments and refunds, whether \nproposed tax deficiencies must be paid before protesting an adjustment, the \nstatute of limitations, and the extent to which rules are made known in advance",
+        "page": 17
+      },
+      {
+        "id": "45",
+        "text": "It would be inappropriate to rely on any of these features, including the burden \nof proof, to make unfounded assertions about transfer pricing",
+        "page": 17
+      },
+      {
+        "id": "46",
+        "text": "Some of these \nissues are discussed further in Chapter IV",
+        "page": 17
+      },
+      {
+        "id": "47",
+        "text": "These Guidelines focus on the main issues of principle that arise \nin the transfer pricing area",
+        "page": 17
+      },
+      {
+        "id": "48",
+        "text": "The Committee on Fiscal Affairs intends \nto continue its work in this area",
+        "page": 17
+      },
+      {
+        "id": "49",
+        "text": "A revision of Chapters  I-III and a new",
+        "page": 17
+      },
+      {
+        "id": "50",
+        "text": "16 – Preface\nChapter  IX were approved in 2010, reflecting work undertaken by the \nCommittee on comparability, on transactional profit methods and on the \ntransfer pricing aspects of business restructurings",
+        "page": 18
+      },
+      {
+        "id": "51",
+        "text": "In 2013, the guidance on \nsafe harbours was also revised in order to recognise that properly designed \nsafe harbours can help to relieve some compliance burdens and provide \ntaxpayers with greater certainty",
+        "page": 18
+      },
+      {
+        "id": "52",
+        "text": "In 2016, these Guidelines were substantially \nrevised in order to reflect the clarifications and revisions agreed in the 2015 \nBEPS Reports on Actions 8-10 Aligning Transfer pricing Outcomes with Value \nCreation and on Action 13 Transfer Pricing Documentation and Country-by-\nCountry Reporting",
+        "page": 18
+      },
+      {
+        "id": "53",
+        "text": "In 2018, a revision of the guidance on the application of \nthe profit split method in Chapter II was approved, as well as the addition of a \nnew annex to Chapter VI which provides guidance for tax administrations on \nthe application of the approach to hard-to-value intangibles",
+        "page": 18
+      },
+      {
+        "id": "54",
+        "text": "Finally, in 2020 a \nnew Chapter X was added to these Guidelines to incorporate guidance on the \ntransfer pricing aspects of financial transactions",
+        "page": 18
+      },
+      {
+        "id": "55",
+        "text": "The Committee intends to \nhave regular reviews of the experiences of OECD member and selected non-\nmember countries in applying the arm’s length principle in order to identify \nareas on which further work could be necessary",
+        "page": 18
+      }
+    ],
+    "Chapter_I": [
+      {
+        "id": "1",
+        "text": "arm’s length principle – 91\nmanufacturing affiliate acting alone could not purchase widgets for a price \nless than the USD 50 000 it paid",
+        "page": 93
+      },
+      {
+        "id": "2",
+        "text": "The deliberate concerted group action in \narranging the purchase discount provides a basis for the allocation of part of \nthe discount to the Country B manufacturing affiliate notwithstanding the \nfact that there is no explicit transaction between the Country B and Country C \nmanufacturing affiliates",
+        "page": 93
+      }
+    ],
+    "Chapter_II": [
+      {
+        "id": "1",
+        "text": "pricing methods – 147\n2",
+        "page": 149
+      },
+      {
+        "id": "2",
+        "text": "In some cases, a significant issue for the reliability of cost-based \nsplitting factors is the determination of the relevant period of time from which \nthe elements of determination of the profit splitting factor(s) (e assets, costs, \nor others) should be taken into account",
+        "page": 149
+      },
+      {
+        "id": "3",
+        "text": "A difficulty arises because there can be \na lag between the time when expenses are incurred and the time when value is \ncreated, and it is sometimes difficult to decide which period’s expenses should \nbe used",
+        "page": 149
+      },
+      {
+        "id": "4",
+        "text": "For example, in the case of a cost-based factor, using the expenditure \non a single-year basis may be suitable for some cases, while in some other cases \nit may be more suitable to use accumulated expenditure (net of depreciation or \namortisation, where appropriate in the circumstances) incurred in the previous \nas well as the current years",
+        "page": 149
+      },
+      {
+        "id": "5",
+        "text": "Depending on the facts and circumstances of \nthe case, this determination may have a significant effect on the allocation of \nprofits amongst the parties",
+        "page": 149
+      },
+      {
+        "id": "6",
+        "text": "As noted in Section C",
+        "page": 149
+      },
+      {
+        "id": "7",
+        "text": "1 above, the selection of \nthe profit splitting factor should be appropriate to the particular circumstances \nof the case and provide a reliable approximation of the division of profits that \nwould have been agreed between independent parties",
+        "page": 149
+      },
+      {
+        "id": "8",
+        "text": "The principles of this \nsection are illustrated by Example 16 in Annex II to Chapter II of this guidance",
+        "page": 149
+      },
+      {
+        "id": "9",
+        "text": "Conclusions on transactional profit methods\n2",
+        "page": 149
+      },
+      {
+        "id": "10",
+        "text": "12 provide guidance on the selection of the most \nappropriate transfer pricing method to the circumstances of the case",
+        "page": 149
+      },
+      {
+        "id": "11",
+        "text": "As discussed in these Guidelines, there are concerns regarding the use \nof the transactional net margin method, in particular that it is sometimes applied \nwithout adequately taking into account the relevant differences between the \ncontrolled and uncontrolled transactions being compared",
+        "page": 149
+      },
+      {
+        "id": "12",
+        "text": "Many jurisdictions \nare concerned that the safeguards established for the traditional transaction \nmethods may be overlooked in applying the transactional net margin method",
+        "page": 149
+      },
+      {
+        "id": "13",
+        "text": "Thus, where differences in the characteristics of the transactions being \ncompared have a material effect on the net profit indicators being used, it \nwould not be appropriate to apply the transactional net margin method without \nmaking adjustments for such differences",
+        "page": 149
+      },
+      {
+        "id": "14",
+        "text": "81 (the \ncomparability standard to be applied to the transactional net margin method)",
+        "page": 149
+      },
+      {
+        "id": "15",
+        "text": "The recognition that the use of transactional profit methods may be \nnecessary is not intended to suggest that independent enterprises would use \nthese methods to set prices",
+        "page": 149
+      },
+      {
+        "id": "16",
+        "text": "As with any method, it is important that it be \npossible to calculate appropriate corresponding adjustments when transactional \nprofit methods are used, recognising that in certain cases corresponding \nadjustments may be determined on an aggregate basis consistent with the \naggregation principles in paragraphs 3",
+        "page": 149
+      },
+      {
+        "id": "17",
+        "text": "In all cases, caution must be used to determine whether a trans­\nactional profit method as applied to a particular aspect of a case can produce",
+        "page": 149
+      },
+      {
+        "id": "18",
+        "text": "148 – Chapter II: Transfer pricing methods\nan arm’s length answer, either in conjunction with a traditional transaction \nmethod or on its own",
+        "page": 150
+      },
+      {
+        "id": "19",
+        "text": "The question ultimately can be resolved only on a case-\nby-case basis taking into account the strengths and weaknesses set forth above \nfor a particular transactional profit method to be applied, the comparability \n(including functional) analysis of the parties to the transaction, and the \navailability and reliability of comparable data",
+        "page": 150
+      },
+      {
+        "id": "20",
+        "text": "In addition, these conclusions \nassume that jurisdictions will have a certain degree of sophistication in their \nunderlying tax systems before applying these methods",
+        "page": 150
+      }
+    ],
+    "Chapter_III": [
+      {
+        "id": "1",
+        "text": "When undertaking a comparability analysis, there is no requirement \nfor an exhaustive search of all possible relevant sources of information",
+        "page": 173
+      },
+      {
+        "id": "2",
+        "text": "Taxpayers and tax administrations should exercise judgment to determine \nwhether particular comparables are reliable",
+        "page": 173
+      },
+      {
+        "id": "3",
+        "text": "It is a good practice for taxpayers to set up a process to establish, \nmonitor and review their transfer prices, taking into account the size of the \ntransactions, their complexity, level of risk involved, and whether they are \nperformed in a stable or changing environment",
+        "page": 173
+      },
+      {
+        "id": "4",
+        "text": "Such a practical approach \nwould conform to a pragmatic risk assessment strategy or prudent business \nmanagement principle",
+        "page": 173
+      },
+      {
+        "id": "5",
+        "text": "In practice, this means that it may be reasonable for a \ntaxpayer to devote relatively less effort to finding information on comparables \nsupporting less significant or less material controlled transactions",
+        "page": 173
+      },
+      {
+        "id": "6",
+        "text": "For simple \ntransactions that are carried out in a stable environment and the characteristics \nof which remain the same or similar, a detailed comparability (including \nfunctional) analysis may not be needed every year",
+        "page": 173
+      },
+      {
+        "id": "7",
+        "text": "Small to medium sized enterprises are entering into the area of transfer \npricing and the number of cross-border transactions is ever increasing",
+        "page": 173
+      },
+      {
+        "id": "8",
+        "text": "Although the arm’s length principle applies equally to small and medium sized \nenterprises and transactions, pragmatic solutions may be appropriate in order \nto make it possible to find a reasonable response to each transfer pricing case",
+        "page": 173
+      }
+    ],
+    "Chapter_IV": [
+      {
+        "id": "1",
+        "text": "approaches – 225\nmakes a resolution of the case still possible by submitting one or more issues \non which the competent authorities cannot reach an agreement to arbitration",
+        "page": 227
+      },
+      {
+        "id": "2",
+        "text": "In the 2008 update to the OECD Model Tax Convention, Article 25 \nwas supplemented with a new paragraph 5 which provides that, in the cases \nwhere the competent authorities are unable to reach an agreement within two \nyears, the unresolved issues will, at the request of the person who presented \nthe case, be solved through an arbitration process",
+        "page": 227
+      },
+      {
+        "id": "3",
+        "text": "This extension of the \nmutual agreement procedure ensures that where the competent authorities \ncannot reach an agreement on one or more issues that prevent the resolution \nof a case, a resolution of the case will still be possible by submitting those \nissues to arbitration",
+        "page": 227
+      },
+      {
+        "id": "4",
+        "text": "Arbitration under paragraph 5 of Article 25 is an integral \npart of the mutual agreement procedure and does not constitute an alternative \nroute to solving tax treaty disputes between States",
+        "page": 227
+      },
+      {
+        "id": "5",
+        "text": "Paragraphs 63-85 of the \nCommentary on Article 25 provide guidance on the arbitration phase of the \nmutual agreement procedure",
+        "page": 227
+      },
+      {
+        "id": "6",
+        "text": "The existence of an arbitration clause similar to paragraph  5 of \nArticle 25 in a particular bilateral treaty should make the mutual agreement \nprocedure itself more effective even in cases where resort to arbitration \nis not necessary",
+        "page": 227
+      },
+      {
+        "id": "7",
+        "text": "The very existence of this possibility should encourage \ngreater use of the mutual agreement procedure since both governments and \ntaxpayers will know at the outset that the time and effort put into the mutual \nagreement procedure will be likely to produce a satisfactory result",
+        "page": 227
+      },
+      {
+        "id": "8",
+        "text": "Further, \ngovernments will have an incentive to ensure that the mutual agreement \nprocedure is conducted efficiently in order to avoid the necessity of subsequent \nsupplemental procedures",
+        "page": 227
+      }
+    ],
+    "Chapter_V": [
+      {
+        "id": "1",
+        "text": "– 243\n•\t\nModel legislation requiring the ultimate parent entity of an MNE \ngroup to file the Country-by-Country Report in its jurisdiction of \nresidence",
+        "page": 245
+      },
+      {
+        "id": "2",
+        "text": "Jurisdictions will be able to adapt this model legislation \nto their own legal systems, where changes to current legislation are \nrequired",
+        "page": 245
+      },
+      {
+        "id": "3",
+        "text": "Key elements of secondary mechanisms have also been \ndeveloped",
+        "page": 245
+      },
+      {
+        "id": "4",
+        "text": "•\t\nImplementing arrangements for the automatic exchange of the Country-\nby-Country Reports under international agreements, incorporating the \nconditions set out in Section E",
+        "page": 245
+      },
+      {
+        "id": "5",
+        "text": "Such implementing arrangements \ninclude competent authority agreements (CAAs) based on existing \ninternational agreements (the Multilateral Convention on Mutual \nAdministrative Assistance in Tax Matters, bilateral tax treaties and \nTIEAs) and inspired by the existing models developed by the OECD \nworking with G20 countries for the automatic exchange of financial \naccount information",
+        "page": 245
+      },
+      {
+        "id": "6",
+        "text": "Jurisdictions endeavour to introduce as necessary domestic \nlegislation in a timely manner",
+        "page": 245
+      },
+      {
+        "id": "7",
+        "text": "They are also encouraged to expand the \ncoverage of their international agreements for exchange of information",
+        "page": 245
+      },
+      {
+        "id": "8",
+        "text": "The \nimplementation of the package will be monitored on an ongoing basis",
+        "page": 245
+      },
+      {
+        "id": "9",
+        "text": "The \noutcomes of this monitoring will be taken into consideration in the 2020 \nreview",
+        "page": 245
+      }
+    ],
+    "Annex_I": [
+      {
+        "id": "1",
+        "text": "Chapter VI: hard-to-value intangibles – 643\nrequirements of paragraph 1 of Article 25, jurisdictions implement appropriate \nprocedures to permit, in certain cases and after an initial tax assessment, \ntaxpayer requests for the multiyear resolution through the MAP of recurring \nissues with respect to filed tax years, where the relevant facts and circumstances \nare the same and subject to the verification of such facts and circumstances on \naudit",
+        "page": 645
+      }
+    ],
+    "Chapter_VI": [
+      {
+        "id": "1",
+        "text": "guidance regarding the determination of arm’s length \nconditions for transactions that involve the use or transfer of intangibles",
+        "page": 342
+      },
+      {
+        "id": "2",
+        "text": "64 give relevant guidance on exercising control over \nthe financial risk if the funding is used for investment in R&D projects",
+        "page": 342
+      },
+      {
+        "id": "3",
+        "text": "The \nguidance in Sections D",
+        "page": 342
+      },
+      {
+        "id": "4",
+        "text": "4 of Chapter VI on hard-to-value intangibles \nis equally applicable to CCAs",
+        "page": 342
+      }
+    ],
+    "Chapter_VII": [
+      {
+        "id": "1",
+        "text": "guidance on issues that \narise in determining for transfer pricing purposes whether services have been \nprovided by a member of an MNE group to other members of that group and, \nif so, in establishing arm’s length prices for those intra-group services",
+        "page": 342
+      },
+      {
+        "id": "2",
+        "text": "This \nchapter’s objective is to provide supplementary guidance on situations where \nresources and skills are pooled and the consideration received is, in part or \nwhole, the reasonable expectation of mutual benefits",
+        "page": 342
+      },
+      {
+        "id": "3",
+        "text": "Thus, the provisions of \nChapters VI and VII, and indeed all the other chapters of these Guidelines, \nwill continue to apply to the extent relevant, for instance in measuring the \nvalue of a contribution to a CCA as part of the process of determining the \nproportionate shares of contributions",
+        "page": 342
+      },
+      {
+        "id": "4",
+        "text": "MNEs are encouraged to observe \nthe guidance of this chapter in order to ensure that their CCAs operate in \naccordance with the arm’s length principle",
+        "page": 342
+      },
+      {
+        "id": "5",
+        "text": "Two types of CCAs are commonly encountered: those established for \nthe joint development, production or the obtaining of intangibles or tangible \nassets (“development CCAs”); and those for obtaining services (“services \nCCAs”)",
+        "page": 342
+      },
+      {
+        "id": "6",
+        "text": "Although each particular CCA should be considered on its own \nfacts and circumstances, key differences between these two types of CCAs \nwill generally be that development CCAs are expected to create ongoing, \nfuture benefits for participants, while services CCAs will create current \nbenefits only",
+        "page": 342
+      },
+      {
+        "id": "7",
+        "text": "Development CCAs, in particular with respect to intangibles, \noften involve significant risks associated with what may be uncertain and \ndistant benefits, while services CCAs often offer more certain and less \nrisky benefits",
+        "page": 342
+      },
+      {
+        "id": "8",
+        "text": "These distinctions are useful because the greater complexity \nof development CCAs may require more refined guidance, particularly on \nthe valuation of contributions, than may be required for services CCAs, as \ndiscussed below",
+        "page": 342
+      },
+      {
+        "id": "9",
+        "text": "However, the analysis of a CCA should not be based on",
+        "page": 342
+      }
+    ],
+    "Chapter_VIII": [
+      {
+        "id": "1",
+        "text": "contribution arrangements – 355\nd)\t the duration of the arrangement\ne)\t the manner in which participants’ proportionate shares of \nexpected benefits are measured, and any projections used in this \ndetermination\nf)\t the manner in which any future benefits (such as intangibles) are \nexpected to be exploited\ng)\t the form and value of each participant’s initial contributions, \nand a detailed description of how the value of initial and \nongoing contributions is determined (including any budgeted vs \nactual adjustments) and how accounting principles are applied \nconsistently to all participants in determining expenditures and \nthe value of contributions\nh)\t the anticipated allocation of responsibilities and tasks, and the \nmechanisms for managing and controlling those responsibilities and \ntasks, in particular, those relating to the development, enhancement, \nmaintenance, protection or exploitation of intangibles or tangible \nassets used in the CCA activity\ni)\t the procedures for and consequences of a participant entering or \nwithdrawing from the CCA and the termination of the CCA\nj)\t any provisions for balancing payments or for adjusting the terms \nof the arrangement to reflect changes in economic circumstances",
+        "page": 357
+      },
+      {
+        "id": "2",
+        "text": "Over the duration of the CCA term, the following information could \nbe useful:\na)\t any change to the arrangement (e",
+        "page": 357
+      },
+      {
+        "id": "3",
+        "text": "in terms, participants, \nsubject activity), and the consequences of such change\nb)\t a comparison between projections used to determine the share of \nexpected benefits from the CCA activity with the actual share of \nbenefits (however, regard should be had to paragraph 3",
+        "page": 357
+      },
+      {
+        "id": "4",
+        "text": "74)\nc)\t the annual expenditure incurred in conducting the CCA activity, \nthe form and value of each participant’s contributions made \nduring the CCA’s term, and a detailed description of how the \nvalue of contributions is determined",
+        "page": 357
+      }
+    ],
+    "Chapter_IX": [
+      {
+        "id": "1",
+        "text": "restructurings – 401\ndoes not involve the use of any significant intangible owned by or licensed \nto the affiliate or the assumption of any significant risks by the affiliate in \nCountry B",
+        "page": 403
+      },
+      {
+        "id": "2",
+        "text": "Once manufactured by the affiliate in Country B, the clothes \nwill be sold to the enterprise in Country A which will on-sell them to third \nparty customers",
+        "page": 403
+      },
+      {
+        "id": "3",
+        "text": "Assume that this restructuring makes it possible for the \ngroup formed by the enterprise in Country A and its affiliate in Country B to \nderive significant location savings",
+        "page": 403
+      },
+      {
+        "id": "4",
+        "text": "The question arises whether the location \nsavings should be attributed to the enterprise in Country A, or its affiliate in \nCountry B, or both (and if so in what proportions)",
+        "page": 403
+      },
+      {
+        "id": "5",
+        "text": "In such an example, given that the relocated activity is a highly \ncompetitive one, it is likely that the enterprise in Country A has the option \nrealistically available to it to use either the affiliate in Country  B or a \nthird party manufacturer",
+        "page": 403
+      },
+      {
+        "id": "6",
+        "text": "As a consequence, it should be possible to find \ncomparables data to determine the conditions in which a third party would \nbe willing at arm’s length to manufacture the clothes for the enterprise",
+        "page": 403
+      },
+      {
+        "id": "7",
+        "text": "In \nsuch a situation, a contract manufacturer at arm’s length would generally be \nattributed very little, if any, part of the location savings",
+        "page": 403
+      },
+      {
+        "id": "8",
+        "text": "Doing otherwise \nwould put the associated manufacturer in a situation different from the \nsituation of an independent manufacturer, and would be contrary to the arm’s \nlength principle",
+        "page": 403
+      },
+      {
+        "id": "9",
+        "text": "As another example, assume now that an enterprise in Country X \nprovides highly specialised and quality engineering services to independent \nclients",
+        "page": 403
+      },
+      {
+        "id": "10",
+        "text": "It charges a fee to its independent clients based on a fixed hourly \nrate that compares with the hourly rate charged by competitors for similar \nservices in the same market",
+        "page": 403
+      },
+      {
+        "id": "11",
+        "text": "Suppose that the wages for qualified engineers \nin Country X are high",
+        "page": 403
+      },
+      {
+        "id": "12",
+        "text": "The enterprise subsequently subcontracts a large part \nof its engineering work to a new subsidiary in Country Y",
+        "page": 403
+      },
+      {
+        "id": "13",
+        "text": "The subsidiary \nin Country Y hires equally qualified engineers to those in Country X for \nsubstantially lower wages, thus deriving significant location savings for the \ngroup formed by the enterprise and its subsidiary Clients continue to deal \ndirectly with the enterprise in Country X and are not necessarily aware of \nthe sub-contracting arrangement",
+        "page": 403
+      },
+      {
+        "id": "14",
+        "text": "For some period of time, the well-known \nenterprise in Country X can continue to charge its services at the original \nhourly rate despite the significantly reduced engineer costs",
+        "page": 403
+      },
+      {
+        "id": "15",
+        "text": "After a certain \nperiod of time, however, it is forced due to competitive pressures to decrease \nits hourly rate (at an amount that would not allow the company in Country X \nto cover the wages for qualified engineers in Country  X, but that would \nstill yield a benefit if those services are provided by qualified engineers \nin Country  Y)",
+        "page": 403
+      },
+      {
+        "id": "16",
+        "text": "Part of the location savings are passed on to its clients",
+        "page": 403
+      },
+      {
+        "id": "17",
+        "text": "In this case also, the question arises of which party(ies) within the MNE \ngroup should, at arm’s length, be attributed the part of the location savings \nnot passed on to the clients: the subsidiary in Country Y, the enterprise in \nCountry X, or both (and if so in what proportions)",
+        "page": 403
+      },
+      {
+        "id": "18",
+        "text": "402 – Chapter IX: business restructurings\n9",
+        "page": 404
+      },
+      {
+        "id": "19",
+        "text": "In determining which party(ies) should be attributed the location \nsavings at arm’s length, it will be important to consider the functions, risks \nand assets of the parties, as well as the options realistically available to \neach of them",
+        "page": 404
+      },
+      {
+        "id": "20",
+        "text": "In this example, assume that there is a high demand for the \ntype of engineering services that the company in Country X sells",
+        "page": 404
+      },
+      {
+        "id": "21",
+        "text": "Assume \nalso that the subsidiary in Country Y is the only company operating in a \nlower-cost location that is able to provide such services with the required \nquality standard, and Company Y is able to withstand competitive pricing \npressures because the technical know-how it has established acts as a barrier \nto competition",
+        "page": 404
+      },
+      {
+        "id": "22",
+        "text": "Furthermore, the company in Country  X does not have \nthe option of engaging qualified engineers in Country X to provide these \nservices, as the cost of their wages would be too high compared to the hourly \nrate charged to clients",
+        "page": 404
+      },
+      {
+        "id": "23",
+        "text": "Considering this, the enterprise in Country X does \nnot have many other options available to it than to use this service provider",
+        "page": 404
+      },
+      {
+        "id": "24",
+        "text": "The remuneration payable by Company X to Company Y should take into \naccount the location savings created by Company Y, in addition to the value \nof its services including any intangibles used in providing those services",
+        "page": 404
+      },
+      {
+        "id": "25",
+        "text": "In some instances, the nature of the contributions made by the enterprise in \nCountry X and its subsidiary in Country Y may meet the criteria for the use \nof a transactional profit split method",
+        "page": 404
+      }
+    ],
+    "Chapter_X": [
+      {
+        "id": "1",
+        "text": "transactions – 451\n10",
+        "page": 453
+      },
+      {
+        "id": "2",
+        "text": "For example Company A is a high street retailer of high value new \ntechnology consumer goods",
+        "page": 453
+      },
+      {
+        "id": "3",
+        "text": "At the point of sale, A offers insurance policies \nto third party customers which provide accidental damage and theft cover \nfor a 3-year period",
+        "page": 453
+      },
+      {
+        "id": "4",
+        "text": "The policies are insured by Company  B, an insurer \nwhich is part of the same MNE group as A",
+        "page": 453
+      },
+      {
+        "id": "5",
+        "text": "A receives a commission with \nsubstantially all of the profit on the insurance contract going to B",
+        "page": 453
+      },
+      {
+        "id": "6",
+        "text": "A full \nfactual and functional analysis shows that the insurance contracts are very \nprofitable and that there is an active market for insurance and reinsurance of \nthe type of risks covered by the policies",
+        "page": 453
+      },
+      {
+        "id": "7",
+        "text": "Benchmarking studies show that the \ncommission paid to A is in line with independent agents selling similar cover \nas a standalone product",
+        "page": 453
+      },
+      {
+        "id": "8",
+        "text": "The profit B earns is above the level of insurers \nproviding similar cover",
+        "page": 453
+      },
+      {
+        "id": "9",
+        "text": "In considering how the conditions of the transaction between A and \nB differ from those which would be made between independent enterprises, \nit is important to consider how the high level of profitability of the insurance \npolicies is achieved and the contributions of each of the parties to that \nvalue creation",
+        "page": 453
+      },
+      {
+        "id": "10",
+        "text": "The product sold to the third party is an insurance policy \nsubstantially the same as that which any other insurer in the general market \ncould provide",
+        "page": 453
+      },
+      {
+        "id": "11",
+        "text": "The sales agent has the advantage of offering the insurance \npolicy to its customer alongside the sale of the goods to be insured",
+        "page": 453
+      },
+      {
+        "id": "12",
+        "text": "It is \nthe advantage of intervening at the point of this sale which provides the \nopportunity to earn a high level of profit",
+        "page": 453
+      },
+      {
+        "id": "13",
+        "text": "A could sell policies underwritten \nby another insurer and retain most of the profit for itself",
+        "page": 453
+      },
+      {
+        "id": "14",
+        "text": "B could not find \nanother agent that has the advantage of point of sale contact with the customer",
+        "page": 453
+      },
+      {
+        "id": "15",
+        "text": "The ability to achieve the very high level of profit on the sale of the insurance \npolicies arises from the advantage of customer contact at the point of sale",
+        "page": 453
+      },
+      {
+        "id": "16",
+        "text": "The arm’s length remuneration for B would be in line with the benchmarked \nreturn for insurers insuring similar risks and the balance of the profit should \nbe allocated to A",
+        "page": 453
+      }
+    ],
+    "Annex_T": [
+      {
+        "id": "1",
+        "text": "VIII: examples on cost contribution arrangements – 651\nExample 5\n21",
+        "page": 653
+      },
+      {
+        "id": "2",
+        "text": "The facts are the same as in Example 4 except that the functional \nanalysis indicates Company A has no capacity to make decisions to take on \nor decline the risk-bearing opportunity represented by its participation in \nthe CCA, or to make decisions on whether and how to respond to the risks \nassociated with the opportunity",
+        "page": 653
+      },
+      {
+        "id": "3",
+        "text": "It also has no capability to mitigate the risks \nor to assess and make decisions relating to the risk mitigation activities of \nanother party conducted on its behalf",
+        "page": 653
+      },
+      {
+        "id": "4",
+        "text": "In accurately delineating the transactions associated with the CCA, \nthe functional analysis therefore indicates that Company A does not control \nits specific risks under the CCA in accordance with the guidance in \nparagraph 8",
+        "page": 653
+      },
+      {
+        "id": "5",
+        "text": "15 and consequently is not entitled to a share in the output that is \nthe objective of the CCA",
+        "page": 653
+      },
+      {
+        "id": "6",
+        "text": "Appendix: recommendation of the council [c(95)126/final] – 653\nAppendix \n \nRecommendation of the Council on the Determination \nof Transfer Pricing between Associated Enterprises \n[C(95)126/Final, as amended]\nTHE COUNCIL,\nHAVING REGARD to Article  5(b) of the Convention on the \nOrganisation for Economic Co-operation and Development of 14th \nDecember, 1960;\nHAVING REGARD to the Declaration on International Investment and \nMultinational Enterprises and the Guidelines annexed thereto [C(76)99(Final)];\nHAVING REGARD to the Declaration on Base Erosion and Profit \nShifting (“BEPS”) [C/MIN(2013)22/FINAL] and to the BEPS Explanatory \nStatement and the measures set out in the BEPS Final Reports (the BEPS \npackage), endorsed by the Council on 1 October 2015 [C(2015)125/REV1] and \nthe G20 Leaders at the Antalya Summit on 15-16 November 2015;\nHAVING REGARD to the Transfer Pricing Guidelines for \nMultinational Enterprises and Tax Administrations, hereafter referred to as \n“Guidelines” as they may be modified by the Committee on Fiscal Affairs;\nHAVING REGARD to the Recommendation of the Council on Base \nErosion and Profit Shifting Measures Related to Transfer Pricing [C(2016)79] \nwhich recommends that Members and non-Members having adhered to \nit follow the guidance set out in the 2015 BEPS Reports on Actions 8-10 \n“Aligning Transfer Pricing Outcomes With Value Creation” [C(2015)125/\nADD8] and on Action 13 “Transfer Pricing Documentation and Country-by-\nCountry Reporting” [C(2015)125/ADD11] as incorporated in the Guidelines;\nHAVING REGARD to the establishment of the Inclusive Framework \non Base Erosion and Profit Shifting as agreed by the Committee on \nFiscal Affairs [CTPA/CFA/NOE2(2016)1/REV3], reported to the Council \n[C/M(2016)3], and endorsed by the G20 Finance Ministers at their",
+        "page": 655
+      },
+      {
+        "id": "7",
+        "text": "654 – Appendix: recommendation of the council [c(95)126/final]\n26-27  February 2016 meeting in Shanghai, China, under which over 100 \ncountries and jurisdictions have been invited to participate as members \n[C(2016)78], i",
+        "page": 656
+      },
+      {
+        "id": "8",
+        "text": "on an equal footing with OECD Members on the basis of the \nsame commitments as OECD Members and existing Associates with regard \nto the BEPS Project;\nCONSIDERING the fundamental need for co-operation among tax \nadministrations to remove the obstacles that international double taxation presents \nto the free movement of goods, services and capital between jurisdictions;\nCONSIDERING the equally fundamental need to effectively prevent \ndouble non-taxation as well as no or low taxation resulting from the \nmisapplication of the international standards for transfer pricing rules leading \nto outcomes in which the allocation of profits is not aligned with the economic \nactivity that produced the profits;\nCONSIDERING that transactions between associated enterprises \nmay take place under conditions differing from those taking place between \nindependent enterprises;\nCONSIDERING that the prices of such transactions between associated \nenterprises (usually referred to as transfer pricing) should, nevertheless, \nfor tax purposes be in conformity with those which would be charged \nbetween independent enterprises (usually referred to as arm’s length pricing) \nconsistent with Article 9 (paragraph 1) of the OECD Model Tax Convention \non Income and on Capital;\nCONSIDERING that problems with regard to transfer pricing in \ninternational transactions assume special importance in view of the substantial \nvolume of such transactions;\nCONSIDERING the need to achieve consistency in the approaches of \ntax administrations, on the one hand, and of associated enterprises, on the \nother hand, in the determination of the income and expenses of a company \nthat is part of a Multinational Enterprise Group that should be taken into \naccount within a jurisdiction",
+        "page": 656
+      },
+      {
+        "id": "9",
+        "text": "On the proposal of the Committee on Fiscal Affairs:\nI",
+        "page": 656
+      },
+      {
+        "id": "10",
+        "text": "RECOMMENDS that Members and non-Members adhering to this \nRecommendation (hereafter the “Adherents”):\ni)\t follow, when reviewing, and if necessary, adjusting transfer \npricing between associated enterprises for the purposes of \ndetermining taxable income, the Guidelines – considering the \nwhole of the Guidelines and the interaction of the different \nchapters – for arriving at arm’s length pricing for transactions \nbetween associated enterprises;",
+        "page": 656
+      },
+      {
+        "id": "11",
+        "text": "Appendix: recommendation of the council [c(95)126/final] – 655\nii)\t encourage taxpayers to follow the Guidelines; to that effect \nAdherents should give the Guidelines publicity and have them \ntranslated, where necessary, into their national language(s);\niii)\t develop further co-operation, on a bilateral or multilateral basis, \nin matters pertaining to transfer pricing",
+        "page": 657
+      },
+      {
+        "id": "12",
+        "text": "INVITES Adherents to notify the Committee on Fiscal Affairs \nof any modifications to the text of any laws or regulations that \nare relevant to the determination of transfer pricing or of the \nintroduction of new laws or regulations",
+        "page": 657
+      },
+      {
+        "id": "13",
+        "text": "INVITES Adherents and the Secretary-General to disseminate this \nRecommendation and the Guidelines",
+        "page": 657
+      },
+      {
+        "id": "14",
+        "text": "INVITES non-Adherents to take due account of and adhere to this \nRecommendation",
+        "page": 657
+      },
+      {
+        "id": "15",
+        "text": "INSTRUCTS the Committee on Fiscal Affairs to:\ni)\t pursue its work on issues pertinent to transfer pricing and \nmodify the Guidelines as necessary;\nii)\t monitor the implementation of this Recommendation, in \nco-operation with the tax authorities of Adherents and with the \nparticipation of the business community and other stakeholders \nand report to Council in light of this monitoring every five \nyears;\niii)\t develop its dialogue with jurisdictions that have not adhered to \nthis Recommendation with the aim of assisting them to become \nfamiliar with the Guidelines, and to adhere to the present \nRecommendation",
+        "page": 657
+      },
+      {
+        "id": "16",
+        "text": "for Multinational Enterprises and Tax \nAdministrations\nIn a global economy where multinational enterprises (MNEs) play a prominent role, \ngovernments need to ensure that the taxable profits of MNEs are not artificially shifted \nout of their jurisdiction and that the tax base reported by MNEs in their country reflects \nthe economic activity undertaken therein",
+        "page": 658
+      },
+      {
+        "id": "17",
+        "text": "For taxpayers, it is essential to limit the risks \nof economic double taxation",
+        "page": 658
+      },
+      {
+        "id": "18",
+        "text": "The  provide guidance \non the application of the “arm’s length principle”, which is the international consensus \non the valuation of cross‑border transactions between associated enterprises",
+        "page": 658
+      },
+      {
+        "id": "19",
+        "text": "This January 2022 edition includes the revised guidance on the application of the transactional \nprofit method and the guidance for tax administrations on the application of the approach \nto hard‑to‑value intangibles agreed in 2018, as well as the new transfer pricing guidance \non financial transactions approved in 2020",
+        "page": 658
+      },
+      {
+        "id": "20",
+        "text": "Finally, consistency changes have been made \nto the rest of the",
+        "page": 658
+      },
+      {
+        "id": "21",
+        "text": "The  \nwere approved by the OECD Council in their original version in 1995",
+        "page": 658
+      },
+      {
+        "id": "22",
+        "text": "9HSTCQE*fcgjbe+\nPRINT \nPDF \n2022",
+        "page": 658
+      }
+    ]
+  },
+  "extraction_stats": {
+    "total_pages": 634,
+    "total_sections": 13,
+    "total_items": 183,
+    "extraction_method": "PyMuPDF"
+  }
+}

@@ -1,0 +1,17 @@
+# PDF extraction dependencies
+PyMuPDF>=1.23.0
+pdfplumber>=0.7.0
+python-dateutil>=2.8.0
+
+# Word document extraction dependencies
+python-docx>=0.8.11
+lxml>=4.9.0
+
+# Optional: For enhanced text processing
+nltk>=3.8
+spacy>=3.4.0
+
+# Development dependencies
+pytest>=7.0.0
+black>=22.0.0
+flake8>=5.0.0

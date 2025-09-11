@@ -22,7 +22,12 @@
       "Bash(timeout:*)",
       "Bash(git ls-tree:*)",
       "WebSearch",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Bash(grep:*)",
+      "Bash(pip install:*)",
+      "Bash(rm:*)",
+      "Bash(find:*)",
+      "Bash(jq:*)"
     ],
     "deny": []
   },

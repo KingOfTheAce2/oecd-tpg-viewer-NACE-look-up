@@ -1,0 +1,109 @@
+2025-09-11 18:43:40,814 - INFO - Starting OECD DOCX extraction tests...
+2025-09-11 18:43:40,857 - INFO - Testing extraction with OECD_TPG_EN_2022.docx
+2025-09-11 18:43:40,857 - INFO - Starting extraction from ..\data\OECD_TPG_EN_2022.docx
+2025-09-11 18:43:41,948 - INFO - Processing document with 5677 paragraphs
+2025-09-11 18:43:41,978 - INFO - Detected section: preface - PROCESSING
+2025-09-11 18:43:42,034 - INFO - Detected section: contents - SKIPPING
+2025-09-11 18:43:42,035 - INFO - Detected section: preface - PROCESSING
+2025-09-11 18:43:42,222 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:42,253 - INFO - Detected section: glossary - SKIPPING
+2025-09-11 18:43:42,322 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:43,697 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:43,702 - INFO - Detected section: part - PROCESSING
+2025-09-11 18:43:43,840 - INFO - Detected section: part - PROCESSING
+2025-09-11 18:43:44,191 - INFO - Detected section: part - PROCESSING
+2025-09-11 18:43:45,041 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:45,551 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:46,842 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:46,951 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:46,958 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:46,966 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:47,122 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:47,131 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:49,192 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:49,714 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:50,157 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:50,217 - INFO - Detected section: part - PROCESSING
+2025-09-11 18:43:50,316 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:50,828 - INFO - Detected section: part - PROCESSING
+2025-09-11 18:43:51,058 - INFO - Detected section: chapter - PROCESSING
+2025-09-11 18:43:52,352 - INFO - Detected section: part - PROCESSING
+2025-09-11 18:43:52,453 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,454 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,455 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,455 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,456 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,457 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,458 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,459 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,460 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,461 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,462 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,463 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,582 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:52,652 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:53,007 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:53,059 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:53,502 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:54,318 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:54,360 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:54,426 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:54,559 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:54,861 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:55,126 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:55,805 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:56,109 - INFO - Detected section: annex - PROCESSING
+2025-09-11 18:43:56,410 - INFO - Extracted 3637 paragraphs
+2025-09-11 18:43:56,471 - INFO - Extraction completed successfully
+2025-09-11 18:43:57,434 - INFO - Test extraction saved to ..\out\test\OECD_TPG_EN_2022_test_extraction.json
+2025-09-11 18:43:57,434 - INFO - === EXTRACTION ANALYSIS ===
+2025-09-11 18:43:57,434 - INFO - Total paragraphs extracted: 3637
+2025-09-11 18:43:57,434 - INFO - Total sections found: 5
+2025-09-11 18:43:57,434 - INFO - Sections: unknown, preface, chapter, part, annex
+2025-09-11 18:43:57,435 - INFO - Paragraphs with OECD numbering: 5
+2025-09-11 18:43:57,435 - INFO - Headings found: 648
+2025-09-11 18:43:57,435 - INFO - 
+=== SECTION BREAKDOWN ===
+2025-09-11 18:43:57,435 - INFO - unknown: 6 paragraphs (0 headings, 0 numbered)
+2025-09-11 18:43:57,435 - INFO - preface: 43 paragraphs (2 headings, 0 numbered)
+2025-09-11 18:43:57,435 - INFO - chapter: 1892 paragraphs (333 headings, 4 numbered)
+2025-09-11 18:43:57,436 - INFO - part: 403 paragraphs (75 headings, 1 numbered)
+2025-09-11 18:43:57,436 - INFO - annex: 1293 paragraphs (238 headings, 0 numbered)
+2025-09-11 18:43:57,436 - INFO - 
+=== SAMPLE PARAGRAPH NUMBERS ===
+2025-09-11 18:43:57,436 - INFO -   - 3.59
+2025-09-11 18:43:57,436 - INFO -   - 3.62
+2025-09-11 18:43:57,436 - INFO -   - D.1.2.1.6
+2025-09-11 18:43:57,436 - INFO -   - D.2
+2025-09-11 18:43:57,436 - INFO -   - D.4
+2025-09-11 18:43:57,437 - INFO - 
+=== SAMPLE HEADINGS ===
+2025-09-11 18:43:57,437 - INFO -   - Foreword
+2025-09-11 18:43:57,437 - INFO -   - Preface
+2025-09-11 18:43:57,437 - INFO -   - Chapter IX were approved in 2010, reflecting work undertaken by the Committee on...
+2025-09-11 18:43:57,437 - INFO -   - Abbreviations and acronyms
+2025-09-11 18:43:57,438 - INFO -   - Chapter I
+2025-09-11 18:43:57,438 - INFO - 
+=== CONTENT FILTERING CHECK ===
+2025-09-11 18:43:57,438 - INFO - Potential copyright content found: True
+2025-09-11 18:43:57,438 - INFO - 
+=== STYLES DETECTED ===
+2025-09-11 18:43:57,439 - INFO - Unique styles: 10
+2025-09-11 18:43:57,439 - INFO -   - Body Text
+2025-09-11 18:43:57,439 - INFO -   - Heading 1
+2025-09-11 18:43:57,439 - INFO -   - Heading 2
+2025-09-11 18:43:57,439 - INFO -   - Heading 3
+2025-09-11 18:43:57,439 - INFO -   - Heading 5
+2025-09-11 18:43:57,439 - INFO -   - Heading 6
+2025-09-11 18:43:57,439 - INFO -   - Heading 7
+2025-09-11 18:43:57,439 - INFO -   - Heading 8
+2025-09-11 18:43:57,439 - INFO -   - List Paragraph
+2025-09-11 18:43:57,439 - INFO -   - Normal
+2025-09-11 18:43:57,441 - INFO - 
+=== PARAGRAPH STRUCTURE VALIDATION ===
+2025-09-11 18:43:57,623 - INFO - Found 5 numbered paragraphs
+2025-09-11 18:43:57,671 - INFO - Chapter references: 411
+2025-09-11 18:43:57,671 - INFO - Article references: 136
+2025-09-11 18:43:57,671 - INFO - Annex references: 109
+2025-09-11 18:43:57,671 - INFO - Expected sections found: ['preface', 'chapter', 'annex', 'unknown']
+2025-09-11 18:43:57,676 - INFO - All tests completed successfully!

@@ -1,0 +1,222 @@
+{
+  "metadata": {
+    "year": 2022,
+    "language": "EN",
+    "title": "OECD Transfer Pricing Guidelines for Multinational Enterprises and Tax Administrations",
+    "extracted_date": "2025-09-11T18:45:12.148132",
+    "source_file": "OECD_TPG_EN_2022.docx"
+  },
+  "statistics": {
+    "total_sections": 37,
+    "total_paragraphs": 1683,
+    "oecd_numbered_paragraphs": 3,
+    "unique_ids": 1680
+  },
+  "section_breakdown": {
+    "Introduction": {
+      "paragraph_count": 59,
+      "has_oecd_numbering": false
+    },
+    "Table_of_Contents": {
+      "paragraph_count": 23,
+      "has_oecd_numbering": false
+    },
+    "Chapter_IX": {
+      "paragraph_count": 2,
+      "has_oecd_numbering": false
+    },
+    "Abbreviations": {
+      "paragraph_count": 119,
+      "has_oecd_numbering": false
+    },
+    "Bibliography": {
+      "paragraph_count": 119,
+      "has_oecd_numbering": false
+    },
+    "Chapter_II": {
+      "paragraph_count": 22,
+      "has_oecd_numbering": true
+    },
+    "Chapter_III": {
+      "paragraph_count": 149,
+      "has_oecd_numbering": true
+    },
+    "Chapter_IV": {
+      "paragraph_count": 2,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_V_of_these_Guidelines_sets_out_the_information_to_be_included_in_the_master_file.": {
+      "paragraph_count": 4,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_V_of_these_Guidelines_sets_out_the_items_of_information_to_be_included_in_the_local_file.": {
+      "paragraph_count": 4,
+      "has_oecd_numbering": false
+    },
+    "Annex_III_to_Chapter_V_of_these_Guidelines_contains_a_model_template_for_the_Country-by-Country_Report_together_with_its_accompanying_instructions.": {
+      "paragraph_count": 59,
+      "has_oecd_numbering": false
+    },
+    "Annex_IV_to_Chapter_V_of_these_Guidelines_contains_an_implementation_package_for_government-to-government_exchange_of_Country-by-Country_Reports,_which_includes:": {
+      "paragraph_count": 5,
+      "has_oecd_numbering": false
+    },
+    "Chapter_VI": {
+      "paragraph_count": 377,
+      "has_oecd_numbering": true
+    },
+    "Chapter_VII": {
+      "paragraph_count": 2,
+      "has_oecd_numbering": false
+    },
+    "Chapter_VIII": {
+      "paragraph_count": 2,
+      "has_oecd_numbering": false
+    },
+    "Chapter_I": {
+      "paragraph_count": 195,
+      "has_oecd_numbering": false
+    },
+    "Annex": {
+      "paragraph_count": 76,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_II:_Sensitivity_of_gross_and_net_profit_indicators.": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_II:_Examples_to_illustrate_the_guidance_on_the_transactional_profit_split_method.": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_IV:_Sample_memoranda_of_understanding_for_competent_authorities_to_establish_bilateral_safe_harbours": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_IV:_Guidelines_for_conducting_Advance_Pricing_Arrangements_under_the_Mutual_Agreement_Procedure_(MAP_APAs).": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_V:_Transfer_pricing_documentation_–_Master_file": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_V:_Transfer_pricing_documentation_–_Local_file": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_III_to_Chapter_V:_Transfer_pricing_documentation_–_Country-_by-Country_Report": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_IV_to_Chapter_V:_Country-by-Country_Reporting_Implementation_Package.": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_VI:_Examples_to_illustrate_the_guidance_on_intangibles.": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_VI:_Guidance_for_tax_administrations_on_the_application_of_the_approach_to_hard-to-value_intangibles.": {
+      "paragraph_count": 1,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_II": {
+      "paragraph_count": 28,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_II": {
+      "paragraph_count": 132,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_IV": {
+      "paragraph_count": 2,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_IV": {
+      "paragraph_count": 3,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_V": {
+      "paragraph_count": 26,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_V": {
+      "paragraph_count": 28,
+      "has_oecd_numbering": false
+    },
+    "Annex_III_to_Chapter_V": {
+      "paragraph_count": 58,
+      "has_oecd_numbering": false
+    },
+    "Annex_IV_to_Chapter_V": {
+      "paragraph_count": 2,
+      "has_oecd_numbering": false
+    },
+    "Annex_I_to_Chapter_VI": {
+      "paragraph_count": 173,
+      "has_oecd_numbering": false
+    },
+    "Annex_II_to_Chapter_VI": {
+      "paragraph_count": 2,
+      "has_oecd_numbering": false
+    }
+  },
+  "sample_content": [
+    {
+      "section": "Introduction",
+      "id": "3644",
+      "text_preview": "Introduction"
+    },
+    {
+      "section": "Table_of_Contents",
+      "id": "32",
+      "text_preview": "Table of contents"
+    },
+    {
+      "section": "Chapter_IX",
+      "id": "1953",
+      "text_preview": "Chapter IX"
+    },
+    {
+      "section": "Abbreviations",
+      "id": "56",
+      "text_preview": "Abbreviations and acronyms"
+    },
+    {
+      "section": "Bibliography",
+      "id": "656",
+      "text_preview": "References to “profits” in this section should generally be taken as applying equally to losses. Tha..."
+    },
+    {
+      "section": "Chapter_II",
+      "id": "471",
+      "text_preview": "Chapter II"
+    },
+    {
+      "section": "Chapter_III",
+      "id": "775",
+      "text_preview": "Chapter III"
+    },
+    {
+      "section": "Chapter_IV",
+      "id": "923",
+      "text_preview": "Chapter IV"
+    },
+    {
+      "section": "Annex_I_to_Chapter_V_of_these_Guidelines_sets_out_the_information_to_be_included_in_the_master_file.",
+      "id": "1254",
+      "text_preview": "Annex I to Chapter V of these Guidelines sets out the information to be included in the master file."
+    },
+    {
+      "section": "Annex_II_to_Chapter_V_of_these_Guidelines_sets_out_the_items_of_information_to_be_included_in_the_local_file.",
+      "id": "1258",
+      "text_preview": "Annex II to Chapter V of these Guidelines sets out the items of information to be included in the lo..."
+    }
+  ],
+  "oecd_numbering_samples": [
+    "3.59",
+    "3.62",
+    "D.2"
+  ]
+}
